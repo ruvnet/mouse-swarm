@@ -4,7 +4,14 @@ import {spawnSync} from 'node:child_process';
 import {mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {exportSwarmVideo,VIDEO_PRESETS} from '../src/video.js';
+import {exportSwarmVideo,VIDEO_PRESETS,isLocalVideoRequest} from '../src/video.js';
+
+test('video asset server accepts only its loopback host and origin',()=>{
+  assert.equal(isLocalVideoRequest({host:'127.0.0.1:4312'},4312),true);
+  assert.equal(isLocalVideoRequest({host:'example.test:4312'},4312),false);
+  assert.equal(isLocalVideoRequest({host:'127.0.0.1:4312',origin:'https://example.test'},4312),false);
+  assert.equal(isLocalVideoRequest({host:'127.0.0.1:4312','sec-fetch-site':'cross-site'},4312),false);
+});
 
 test('video presets include a 9:11 portrait and validate options',async()=>{
   assert.deepEqual(VIDEO_PRESETS.portrait,{width:1080,height:1320});

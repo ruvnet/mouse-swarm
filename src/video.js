@@ -11,6 +11,12 @@ export const VIDEO_PRESETS=Object.freeze({
   vertical:Object.freeze({width:1080,height:1920})
 });
 
+/** Restrict the temporary asset server to its loopback origin. */
+export function isLocalVideoRequest(headers,port){
+  const host=`127.0.0.1:${port}`;
+  return headers.host===host&&(!headers.origin||headers.origin===`http://${host}`)&&headers['sec-fetch-site']!=='cross-site';
+}
+
 /** No shell or implicit page navigation. Requires FFmpeg with libx264. Output is never overwritten. */
 export async function exportSwarmVideo({page,outputPath,preset='portrait',width,height,duration=10,fps=24,ffmpeg='ffmpeg',signal}={}) {
   if(!page||typeof page.screenshot!=='function'||typeof page.setViewportSize!=='function')throw new TypeError('a Playwright page is required');

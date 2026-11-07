@@ -33,6 +33,8 @@ const adapter = createMetaHarnessAdapter({
 
 This adapter does not discover sessions, subscribe to a native feed, execute agents, or authenticate a source. It requires monotonically increasing indices within each branch. Free-form payloads can contain private data; only map the fields your application is authorized to retain. The adapter follows the [MetaHarness session envelope](https://github.com/ruvnet/metaharness/blob/574ce3b881e902d23472a541f9f9e2fdccfa63db/packages/kernel-js/src/session.ts).
 
+When combining sources, namespace agent IDs in the host mapper so identical IDs from separate sources do not merge into one replayed agent. Source references are labels supplied by the host, not cryptographic proof.
+
 ## Studio
 
 Serve the repository over HTTP and open `examples/studio.html`. The studio configures a bundled sample page: choose elements, timing, cursor count, and colors, then preview and export or import a JSON configuration. It does not fetch or decompose arbitrary websites. Do not open a downloaded configuration from an untrusted source without review.

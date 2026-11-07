@@ -4,7 +4,7 @@ import {createRequire} from 'node:module';
 import {createServer} from 'node:http';
 import {readFile,realpath} from 'node:fs/promises';
 import {resolve,dirname,extname,sep} from 'node:path';
-import {exportSwarmVideo,VIDEO_PRESETS} from '../src/video.js';
+import {exportSwarmVideo,VIDEO_PRESETS,isLocalVideoRequest} from '../src/video.js';
 
 const help='Usage: node bin/video.js --input path/to/page.html --output output.mp4 [--preset portrait|square|vertical] [--duration 10] [--fps 24] [--chromium /path/to/chromium]\nRequires Playwright and FFmpeg with libx264. Only use HTML you trust. Output is not overwritten.';
 const args=process.argv.slice(2);if(args.includes('--help')||args.includes('-h')){console.log(help);process.exit(0)}
@@ -17,6 +17,7 @@ try{
   const input=await realpath(resolve(options['--input']));if(extname(input).toLowerCase()!=='.html')throw Error('input must be a local HTML file');
   const root=await realpath(dirname(input));
   server=createServer(async(req,res)=>{try{
+    if(!isLocalVideoRequest(req.headers,server.address().port)){res.writeHead(403);res.end();return}
     if(req.method!=='GET'&&req.method!=='HEAD')throw Error('method');
     const path=decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);
     const requested=path==='/'?input:resolve(root,'.'+path);
