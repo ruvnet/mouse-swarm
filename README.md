@@ -1,6 +1,6 @@
 # Mouse Swarm Reveal
 
-![Animated mouse swarm building a landing page](assets/mouse-swarm-reveal.svg)
+[![Animated mouse swarm building a landing page](assets/mouse-swarm-reveal.svg)](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/)
 
 Turn a landing page into a visual build sequence. Elements appear in order while a swarm of colored cursors and agent markers moves around them.
 
