@@ -2,31 +2,43 @@
 
 ![Animated mouse swarm building a landing page](assets/mouse-swarm-reveal.svg)
 
-Build a landing page as a sequence of visible elements while simulated cursors and agent markers move around it. This package includes a dependency-free browser module and one portable skill that works with Claude Code and Codex.
+Turn a landing page into a visual build sequence. Elements appear in order while a swarm of colored cursors and agent markers moves around them.
 
-[View the Cloudflare reveal](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/) · [Watch the 9:11 example video](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4)
+[See the live reveal](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/) · [Watch the 9:11 promo](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4) · [Ruflo](https://github.com/ruvnet/ruflo)
 
-The cursors are an animation. They are not actual agent actions, telemetry, or computer control.
-
-**Registry status:** The npm registry release is pending. Install from GitHub using the commands below.
+**The swarm is simulated.** It does not control a computer, run agents, or report live agent activity.
 
 ## Install the skill
 
-From your project directory:
+From your project directory, run:
 
-```sh
-npx --yes --package=github:ruvnet/mouse-swarm- mouse-swarm init
+```bash
+npx skills add ruvnet/mouse-swarm --skill mouse-swarm-reveal -a claude-code -a codex -y --copy
 ```
 
-This installs the skill and its bundled browser module in `.claude/skills/mouse-swarm-reveal` and `.agents/skills/mouse-swarm-reveal`. Use `--claude` or `--codex` to install only one. Existing directories are protected unless `--force` is provided; back up your edits before using it.
+This installs the skill and its bundled browser module for both Claude Code and Codex. Use `-a claude-code` or `-a codex` to target one agent. Omit `-y` to review the installer prompts, or add `-g` to install globally. The current `skills` CLI requires Node.js 22.20 or later; check your installed CLI version for its requirements.
 
-Ask your agent: “Use the mouse swarm reveal skill to animate this landing page.” The skill includes a standalone HTML example under `assets/`.
+Then ask your agent:
+
+> Use the mouse swarm reveal skill to make this landing page build itself in sequence. Include replay and skip controls.
+
+**What is installed**
+
+- A portable `SKILL.md` with the integration and validation workflow.
+- A dependency-free browser module in `assets/mouse-swarm.js`.
+- A standalone example in `assets/demo.html`.
+
+The installer is a separate tool. Review the skill before use, and use `--copy` when you want independent copies instead of symlinks.
 
 ## Use the browser module
 
-```sh
-npm install github:ruvnet/mouse-swarm-
+The npm registry release is pending. Install the package directly from GitHub:
+
+```bash
+npm install github:ruvnet/mouse-swarm
 ```
+
+Mark elements in the order they appear in the document. Add `data-swarm-type` to a leaf element when its text should appear in chunks.
 
 ```html
 <h1 data-swarm-item data-swarm-type>Build something together.</h1>
@@ -36,27 +48,25 @@ npm install github:ruvnet/mouse-swarm-
 
 ```js
 import { createSwarmReveal } from '@ruvector/mouse-swarm';
+
 const reveal = createSwarmReveal({ cursors: 20, interval: 280 });
 document.querySelector('#skip').addEventListener('click', reveal.skip);
 reveal.start();
-// reveal.replay() and reveal.destroy() are also available.
+
+// Optional: reveal.replay() and reveal.destroy()
 ```
 
-The markup targets are selected in document order. `data-swarm-type` types text in groups of words on leaf elements only. Avoid marking both a parent and its descendants. The overlay is pointer transparent, does not collect visitor data, and honors reduced motion. Use one instance per root and call `destroy()` when removing a component. Without JavaScript, unmodified content remains visible.
+The overlay is pointer transparent and respects reduced motion. Use one instance per root and call `destroy()` when the component unmounts. Avoid marking both a parent and its descendants as reveal targets. Serve `examples/` over HTTP to try the sample without a build tool.
 
-For a plain HTML project, copy `skills/mouse-swarm-reveal/assets/mouse-swarm.js` to a public assets folder and import it as an ES module. Serve `examples/` over HTTP to run the included sample.
+## Video and deployment
 
-## Cloudflare deployment
+The [portrait MP4](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4) is a pre-rendered example, not a recording of live agents. The browser module does not generate video; use a separate recording or rendering workflow when an MP4 is required.
 
-The landing page is deployed as a Cloudflare Worker. Its source is in `site/index.html` and `site/worker.mjs`; the video URL redirects to the published MP4 on the existing demo site. The requested `mouse.ruv.io` hostname is pending access to its Cloudflare DNS zone.
-
-## Video
-
-The linked portrait MP4 is an example asset, not a recording of live agents. The browser module does not produce video; use a screen recorder or a separate rendering pipeline for video exports. Do not misrepresent simulated activity as operational telemetry.
+The [live landing page](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/) runs on Cloudflare Workers. Its source is in `site/`. The `mouse.ruv.io` hostname is pending access to the Cloudflare account that controls its DNS zone.
 
 ## Development
 
-```sh
+```bash
 npm test
 npm pack --dry-run
 ```
