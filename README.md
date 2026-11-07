@@ -4,7 +4,7 @@
 
 Build a landing page as a sequence of visible elements while simulated cursors and agent markers move around it. This package includes a dependency-free browser module and one portable skill that works with Claude Code and Codex.
 
-[View the Ruflo reveal](https://ruv-built-by-the-swarm.ruv.chatgpt.site/) · [Watch the 9:11 example video](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4)
+[View the Cloudflare reveal](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/) · [Watch the 9:11 example video](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4)
 
 The cursors are an animation. They are not actual agent actions, telemetry, or computer control.
 
@@ -45,6 +45,10 @@ reveal.start();
 The markup targets are selected in document order. `data-swarm-type` types text in groups of words on leaf elements only. Avoid marking both a parent and its descendants. The overlay is pointer transparent, does not collect visitor data, and honors reduced motion. Use one instance per root and call `destroy()` when removing a component. Without JavaScript, unmodified content remains visible.
 
 For a plain HTML project, copy `skills/mouse-swarm-reveal/assets/mouse-swarm.js` to a public assets folder and import it as an ES module. Serve `examples/` over HTTP to run the included sample.
+
+## Cloudflare deployment
+
+The landing page is deployed as a Cloudflare Worker. Its source is in `site/index.html` and `site/worker.mjs`; the video URL redirects to the published MP4 on the existing demo site. The requested `mouse.ruv.io` hostname is pending access to its Cloudflare DNS zone.
 
 ## Video
 
