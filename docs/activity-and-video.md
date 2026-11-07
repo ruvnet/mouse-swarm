@@ -1,5 +1,7 @@
 # Activity, MetaHarness, studio, and video
 
+[![Animated activity capture and replay flow](../assets/swarm-record-replay.svg)](../README.md#record-replay-and-create)
+
 ## Record Ruflo observations
 
 Start the local observer from the intended Ruflo project as described in the [Ruflo guide](ruflo-user-guide.md). Choose **Start recording** before the activity you want to observe. Successful snapshots create a bounded in-memory timeline of initial agents and subsequent observed changes. Choose **Stop recording**, then **Replay** or **Download JSON**. Use **Load JSON** to reopen a previously saved recording. Pause and resume replay with the playback control. Closing the page discards an unsaved recording.
@@ -9,6 +11,8 @@ Each entry has an observation timestamp, a sequence number, and source provenanc
 The current Ruflo task listing can omit assigned `in_progress` tasks. The observer does not infer task completion from task absence; it records agent snapshot changes only. Failed polls are not recorded as removals.
 
 ## MetaHarness adapter
+
+[![Animated MetaHarness session integration](../assets/swarm-metaharness.svg)](../README.md#record-replay-and-create)
 
 The MetaHarness adapter accepts host-supplied native session envelopes with `index`, `branch`, `kind`, and `payload`. It requires an explicit mapper because those envelopes do not guarantee agent IDs, timestamps, or shared task semantics. The host must verify the source and supply the meaning of its own event kinds. The recorded time is the local observation time. Raw payloads are not retained by the adapter.
 

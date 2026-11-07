@@ -20,6 +20,19 @@ Turn a landing page into a visual build sequence. Elements appear in order while
 | Ruflo observation | Shows local CLI agent registrations and reported status. |
 | Agent skills | Installs reusable instructions and assets for Claude Code and Codex. |
 
+## Find your workflow
+
+[![Animated guide to Mouse Swarm workflows](assets/swarm-guide-map.svg)](docs/activity-and-video.md)
+
+| I want to | Start here |
+| --- | --- |
+| Build an animated page with Claude or Codex | [Install the skill](#install-the-skill) or use the [Claude plugin](docs/claude-plugin.md). |
+| Experiment with my own content | Open the [studio](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/studio/) and import a local HTML file as a text outline. |
+| Observe Ruflo locally | Follow the [Ruflo observation guide](docs/ruflo-user-guide.md). |
+| Replay activity or create an MP4 | Follow the [activity and video guide](docs/activity-and-video.md). |
+| Check a reveal in a browser | Use the [Playwright verification guide](docs/playwright.md). |
+| Deploy a public reveal | See the [Cloudflare guide](docs/cloudflare.md). |
+
 ## See it in action
 
 **Landing page reveal.** Watch the simulated swarm assemble the Ruflo page one element at a time.
@@ -37,6 +50,8 @@ Turn a landing page into a visual build sequence. Elements appear in order while
 The screenshots show the public demos. Their cursors are simulated; the local Ruflo observer presents reported status separately.
 
 ## Claude Code plugin and Ruflo mod
+
+[![Animated Claude plugin and Ruflo mod overview](assets/swarm-claude-plugin.svg)](docs/claude-plugin.md)
 
 Install the plugin from the Claude Code prompt:
 
@@ -260,6 +275,8 @@ The local Ruflo observer can record observed agent snapshot changes in memory, r
 The [visual studio](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/studio/) previews reveal settings, extracts text from local HTML files, and imports or exports configuration. The optional MP4 exporter creates portrait 9:11, square, and vertical videos from trusted local HTML or a saved observation recording. See the [activity and video guide](docs/activity-and-video.md) for setup, limitations, and MetaHarness examples. A [React example](examples/react/SwarmReveal.jsx) and [Cloudflare deployment guide](docs/cloudflare.md) are also available.
 
 ## Playwright verification
+
+[![Animated Playwright verification overview](assets/swarm-playwright.svg)](docs/playwright.md)
 
 Use the optional [Playwright integration](docs/playwright.md) to verify reveal controls, reduced motion, and pointer transparency in a real browser. Configure browser engine, viewport, capture timing, and H.264 output with command flags or a JSON settings file. The guide includes an offline example and explains what each check can prove.
 

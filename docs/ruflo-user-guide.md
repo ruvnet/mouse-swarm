@@ -1,5 +1,7 @@
 # Ruflo observation user guide
 
+[![Animated Ruflo observation flow](../assets/ruflo-observe.svg)](../README.md#observe-a-local-ruflo-swarm)
+
 Mouse Swarm can show reported Ruflo agent registrations and statuses in a browser on the same computer as the Ruflo CLI. This is a read only view of the local CLI, separate from the animated landing page reveal.
 
 The view does not start or stop agents, execute tasks, prove that work was performed, or access cursor positions. Its browser polling is a status snapshot, not a stream of task events. The animated cursors in the reveal are illustrative.

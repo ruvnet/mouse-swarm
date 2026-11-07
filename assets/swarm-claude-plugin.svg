@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 245" role="img" aria-labelledby="title desc">
+<title id="title">From a request to a verified reveal.</title>
+<desc id="desc">Claude plugin: Reveal, observe, verify, export; Optional Ruflo mod: In-process status when available; Mouse Swarm: Visual reveal and local observer</desc>
+<rect width="1000" height="245" rx="22" fill="#0b1115"/><rect x="1" y="1" width="998" height="243" rx="21" fill="none" stroke="#283b3c"/>
+<text x="35" y="44" fill="#d5fb8d" font-family="Arial,sans-serif" font-size="14" font-weight="bold" letter-spacing="2">CLAUDE CODE + RUFLO</text>
+<text x="35" y="77" fill="#eef7ef" font-family="Arial,sans-serif" font-size="22" font-weight="bold">From a request to a verified reveal.</text>
+<rect x="35" y="108" width="275" height="92" rx="11" fill="#16241f" stroke="#345146"/>
+<text x="57" y="143" fill="#d5fb8d" font-family="Arial,sans-serif" font-size="17" font-weight="bold">Claude plugin</text>
+<text x="57" y="169" fill="#a9bcb3" font-family="Arial,sans-serif" font-size="13">Reveal, observe, verify, export</text>
+<rect x="362" y="108" width="275" height="92" rx="11" fill="#16241f" stroke="#345146"/>
+<text x="384" y="143" fill="#c9acff" font-family="Arial,sans-serif" font-size="17" font-weight="bold">Optional Ruflo mod</text>
+<text x="384" y="169" fill="#a9bcb3" font-family="Arial,sans-serif" font-size="13">In-process status when available</text>
+<rect x="689" y="108" width="275" height="92" rx="11" fill="#16241f" stroke="#345146"/>
+<text x="711" y="143" fill="#7dc9fc" font-family="Arial,sans-serif" font-size="17" font-weight="bold">Mouse Swarm</text>
+<text x="711" y="169" fill="#a9bcb3" font-family="Arial,sans-serif" font-size="13">Visual reveal and local observer</text>
+<path d="M315 155h42" stroke="#64826e" stroke-width="2"/>
+<circle r="5" fill="#d5fb8d"><animateMotion path="M315 155 H357" dur="2s" begin="0s" repeatCount="indefinite"/></circle>
+<path d="M642 155h42" stroke="#64826e" stroke-width="2"/>
+<circle r="5" fill="#c9acff"><animateMotion path="M642 155 H684" dur="2s" begin="1s" repeatCount="indefinite"/></circle>
+</svg>

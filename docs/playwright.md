@@ -1,5 +1,7 @@
 # Playwright integration and settings
 
+[![Animated Playwright verification overview](../assets/swarm-playwright.svg)](../README.md#playwright-verification)
+
 Use the optional Playwright integration to check a reveal on an existing browser page, or use Playwright and FFmpeg to record a trusted local page or saved activity timeline. Playwright controls a test browser; the simulated cursors remain visual effects and are not evidence of real agents or computer input.
 
 ## Install and run the offline browser check
@@ -14,7 +16,7 @@ node examples/playwright-check.mjs
 
 The example serves only the bundled demo on loopback and checks pause, resume, skip, restored targets, overlay pointer transparency, and reduced motion. To try Firefox, install it with `npx playwright install firefox`, then run `SWARM_BROWSER=firefox node examples/playwright-check.mjs`. `SWARM_BROWSER=webkit` selects WebKit when its browser and system dependencies are installed. `SWARM_BROWSER_PATH` optionally selects a browser executable; Playwright recommends its matching browser builds for compatibility.
 
-This integration was exercised with Chromium and Firefox in the project test environment. WebKit requires its own operating system libraries and was not verified there. See [Playwright browser installation](https://playwright.dev/docs/browsers) for platform dependencies.
+A passing check prints a `PASS` line naming the browser. This integration was exercised with Chromium and Firefox in the project test environment. WebKit requires its own operating system libraries and was not verified there. See [Playwright browser installation](https://playwright.dev/docs/browsers) for platform dependencies.
 
 ## Use the harness with an existing page
 

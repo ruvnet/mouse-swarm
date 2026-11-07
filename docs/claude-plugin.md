@@ -1,5 +1,7 @@
 # Claude Code plugin and Ruflo mod
 
+[![Animated Claude plugin and Ruflo mod overview](../assets/swarm-claude-plugin.svg)](../README.md#claude-code-plugin-and-ruflo-mod)
+
 The Mouse Swarm Claude Code plugin packages the existing reveal skill, four commands, and an optional function hook mod. The existing [Codex and Claude skill installation](../README.md#install-the-skill) still works independently.
 
 ## Install
@@ -30,7 +32,14 @@ For a terminal based installation, consult your installed Claude Code version's 
 | `/mouse-swarm:verify` | Verify reveal behavior using Playwright when available. |
 | `/mouse-swarm:video` | Export a trusted local page or recorded observation to MP4. |
 
-Add your request after the command. The plugin provides instructions; it does not execute commands, record activity, or publish outputs merely by being installed.
+Add your request after the command. For example:
+
+```text
+/mouse-swarm:reveal Build the current landing page in sequence with replay and skip controls.
+/mouse-swarm:verify Check the current reveal in Chromium and test reduced motion.
+```
+
+The plugin provides instructions; it does not execute commands, record activity, or publish outputs merely by being installed.
 
 ## Optional Ruflo mod integration
 
