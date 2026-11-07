@@ -3,7 +3,24 @@
   "version": "0.1.0",
   "description": "Sequential landing page reveals with simulated mouse swarms and installable Claude Code and Codex skills.",
   "type": "module",
-  "exports": "./src/index.js",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./ruflo": {
+      "types": "./src/ruflo.d.ts",
+      "default": "./src/ruflo.js"
+    },
+    "./ruflo-view": {
+      "types": "./src/ruflo-view.d.ts",
+      "default": "./src/ruflo-view.js"
+    },
+    "./ruflo-cli": {
+      "types": "./src/ruflo-cli.d.ts",
+      "default": "./src/ruflo-cli.js"
+    }
+  },
   "bin": {
     "mouse-swarm": "bin/mouse-swarm.js"
   },
@@ -17,7 +34,7 @@
   ],
   "scripts": {
     "test": "node --test",
-    "prepack": "node --check src/index.js && node --check bin/mouse-swarm.js"
+    "prepack": "node --check src/index.js && node --check src/ruflo.js && node --check src/ruflo-view.js && node --check src/ruflo-cli.js && node --check src/ruflo-server.js && node --check bin/mouse-swarm.js"
   },
   "repository": {
     "type": "git",

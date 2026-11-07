@@ -58,6 +58,36 @@ reveal.start();
 
 The overlay is pointer transparent and respects reduced motion, including changes during playback. Hidden targets are temporarily inert so keyboard users cannot focus invisible content. Overlapping targets cannot be owned by two instances from the same module; call `destroy()` when the component unmounts. Avoid marking both a parent and its descendants as reveal targets. Serve `examples/` over HTTP to try the interactive playground without a build tool.
 
+## Observe a local Ruflo swarm
+
+The library includes an **opt in, read only** bridge for a locally installed Ruflo CLI. From the Ruflo project you want to observe:
+
+```bash
+npx --yes --package=github:ruvnet/mouse-swarm mouse-swarm observe --port 4173
+```
+
+Open `http://127.0.0.1:4173/` on that same machine. The server polls `ruflo agent list --format json` in the current directory. It is bound to loopback, serves a bounded snapshot, and exposes only agent IDs, roles, and reported statuses. It never starts agents or runs tasks. Agent registrations and status values do not by themselves prove execution.
+
+The Ruflo CLI does not provide cursor coordinates. The live status view shows a list when positions are unavailable; it never invents cursor movements. The separate landing page reveal remains a simulation. Task descriptions, prompts, and credentials are excluded from the local CLI bridge. Do not expose the local status server to the public internet.
+
+For a custom authenticated backend, use the transport-neutral adapter and view. The following is an **illustrative event**, not a connection to Ruflo:
+
+```js
+import { createRufloSwarmAdapter } from '@ruvector/mouse-swarm/ruflo';
+import { createRufloSwarmView } from '@ruvector/mouse-swarm/ruflo-view';
+
+const adapter = createRufloSwarmAdapter({ maxAgents: 64 });
+const view = createRufloSwarmView({ adapter, container: document.querySelector('#swarm') });
+adapter.ingest({ type: 'agent.upsert', id: 'agent-1', role: 'reviewer', status: 'idle' });
+// Only set connected after your own trusted source is verified.
+// view.setSourceState('connected');
+// On teardown: view.destroy(); adapter.dispose();
+```
+
+A trusted host can supply normalized agent updates and task status updates. Markers appear only for explicit normalized viewport coordinates supplied by the host; omit `position` if none are available. Protect and authorize the source on your server, minimize fields sent to the browser, and do not expose Ruflo credentials or private task text. The adapter does not connect to Ruflo or provide an authenticated transport by itself. When polling fails, retain the last snapshot only as stale and do not remove agents until a complete successful snapshot is available.
+
+Use `adapter.replaceAgents(events)` for a complete snapshot. It validates the whole batch and replaces it atomically. For revisioned sources, equal revisions retain the previous agent data; newer revisions update it. The adapter remembers up to twice `maxAgents` recent revisioned removals, so the source must also enforce ordering or prevent delayed events after those removal records are evicted.
+
 ## Configuration
 
 Pass options to `createSwarmReveal`. Defaults preserve the original reveal behavior.

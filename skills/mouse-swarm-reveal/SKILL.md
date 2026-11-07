@@ -34,6 +34,12 @@ reveal.start();
 
 For static sites, replace the import path with the served path to the copied module. `assets/demo.html` is an interactive configuration reference; use the project's own content and design. Targets cannot be shared by simultaneous instances from the same module. An animation or callback error restores content and reports through `onError`.
 
+## Ruflo integration
+
+For observed state, prefer the opt in loopback example: run `npx --yes --package=github:ruvnet/mouse-swarm mouse-swarm observe` from the intended Ruflo project and open the printed local URL. It reads agent registrations and status using the local Ruflo CLI; it does not start agents, control a computer, or report cursor positions. Do not expose that server publicly.
+
+For a custom host, use `@ruvector/mouse-swarm/ruflo` and `@ruvector/mouse-swarm/ruflo-view`, or copy the corresponding bundled assets into the project. The host must authenticate, authorize, minimize, and normalize events. Supply coordinates only when they were actually observed. Do not put secrets, raw task descriptions, or private agent data into a public landing page. Display status provenance and stale or error state; do not infer execution from registration. The adapter does not perform network calls or execute tasks.
+
 ## Validation
 
 - Check the initial sequence, final page, replay, pause, resume, skip, and teardown. Validate custom values and progress callbacks. Confirm that links and controls remain usable and the overlay does not intercept clicks.
