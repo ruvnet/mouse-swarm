@@ -1,0 +1,38 @@
+name: Validate mouse swarm
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit:
+    name: Node ${{ matrix.node }} tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm test
+      - run: npm pack --dry-run
+  browser:
+    name: Chromium and Firefox playback
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --ignore-scripts playwright@1.65.0
+      - run: npx playwright install --with-deps chromium firefox
+      - run: node examples/playwright-check.mjs
+      - run: node examples/capture-check.mjs
+      - run: node examples/playwright-check.mjs
+        env:
+          SWARM_BROWSER: firefox

@@ -10,6 +10,7 @@ const css = `
 .ms-label{display:inline-block;margin:0 0 0 9px;padding:2px 5px;border-radius:3px;background:currentColor;font:10px system-ui,sans-serif}
 .ms-label span{color:#101510}
 .ms-selection{position:absolute;border:1px solid #70bdff;background:#80baff10;box-shadow:0 0 12px #68b6ff22;opacity:0;transition:left .18s,top .18s,width .18s,height .18s,opacity .18s}
+.ms-role{position:absolute;opacity:0;padding:3px 6px;border-radius:3px;background:#c9f578;color:#101510;font:11px system-ui,sans-serif;white-space:nowrap}.ms-role[data-active]{opacity:1}
 .ms-selection[data-active]{opacity:1}.ms-selection::before,.ms-selection::after{content:'';position:absolute;width:6px;height:6px;background:#b5e7ff;border:1px solid #3180b1}.ms-selection::before{left:-4px;top:-4px}.ms-selection::after{right:-4px;bottom:-4px}
 @media(prefers-reduced-motion:reduce){[data-ms-item]{transition:none!important}.ms-overlay{display:none!important}}
 `;
@@ -39,15 +40,29 @@ export function createSwarmReveal({
   if (onError !== undefined && typeof onError !== 'function') throw new TypeError('onError must be a function');
   const doc = root.nodeType === 9 ? root : root.ownerDocument;
   const win = doc.defaultView;
-  const items = [...root.querySelectorAll(selector)];
+  const itemMeta = [...root.querySelectorAll(selector)].map((el,index)=>{
+    function integerAttribute(name,max){
+      if(!el.hasAttribute(name))return undefined;
+      const raw=el.getAttribute(name);
+      if(typeof raw!=='string'||!/^\d+$/.test(raw)||Number(raw)>max)throw new RangeError(`${name} must be an integer from 0 to ${max}`);
+      return Number(raw);
+    }
+    const order=integerAttribute('data-swarm-order',100000),delay=integerAttribute('data-swarm-delay',10000)??0;
+    const rawRole=el.hasAttribute('data-swarm-role')?el.getAttribute('data-swarm-role'):'';
+    if(typeof rawRole!=='string'||rawRole.length>40||/[\u0000-\u001f\u007f-\u009f]/.test(rawRole))throw new TypeError('data-swarm-role must be at most 40 printable characters');
+    return {el,index,order,delay,role:rawRole.trim()};
+  });
+  itemMeta.sort((a,b)=>(a.order??Infinity)-(b.order??Infinity)||a.index-b.index);
+  const items=itemMeta.map(x=>x.el);
   if (items.some(el => OWNERS.has(el))) throw new Error('reveal targets are already owned by another instance');
-  const snapshots = items.map(el => ({el, text: el.hasAttribute('data-swarm-type') && el.children.length === 0 ? el.textContent : null, hadItem: el.hasAttribute('data-ms-item'), hidden: el.hasAttribute('data-ms-hidden'), inert: el.hasAttribute('inert')}));
+  const snapshots = itemMeta.map(({el,delay,role}) => ({el,delay,role, text: el.hasAttribute('data-swarm-type') && el.children.length === 0 ? el.textContent : null, hadItem: el.hasAttribute('data-ms-item'), hidden: el.hasAttribute('data-ms-hidden'), inert: el.hasAttribute('inert')}));
   const motion = win.matchMedia?.('(prefers-reduced-motion: reduce)');
   const isReduced = () => !!motion?.matches;
   const owner = {};
   const style = doc.createElement('style'); style.textContent = css; doc.head.append(style);
   const overlay = doc.createElement('div'); overlay.className = 'ms-overlay'; overlay.setAttribute('aria-hidden','true');
   const box = doc.createElement('div'); box.className = 'ms-selection'; overlay.append(box);
+  const roleTag=doc.createElement('div');roleTag.className='ms-role';
   const agents = Array.from({length:cursors}, (_, i) => {
     const c = doc.createElement('div'); const isBot=botEvery>0 && (i+1)%botEvery===0;
     c.className = 'ms-cursor' + (isBot ? ' bot' : ''); c.style.color = colors[i % colors.length];
@@ -56,24 +71,27 @@ export function createSwarmReveal({
     if (labels[i]) { const label=doc.createElement('div'), text=doc.createElement('span'); label.className='ms-label'; text.textContent=labels[i]; label.append(text); c.append(label); }
     overlay.append(c); return c;
   });
+  overlay.append(roleTag);
   doc.body.append(overlay);
   items.forEach(el => OWNERS.set(el,owner));
   let timer = null, generation = 0, next = 0, steps = [], state = 'idle';
   function clear() { if (timer !== null) win.clearTimeout(timer); timer = null; }
-  function placeAgents(el) {
+  function placeAgents(el,role) {
     if (!el || isReduced()) return;
     const r = el.getBoundingClientRect(), w = win.innerWidth, h = win.innerHeight;
-    if (r.bottom < 0 || r.top > h) { box.removeAttribute('data-active'); return; }
+    if (r.bottom < 0 || r.top > h) { box.removeAttribute('data-active');roleTag.removeAttribute('data-active'); return; }
     const x = Math.max(8,Math.min(w-30,r.left+Math.min(r.width,220)*.6));
     const y = Math.max(8,Math.min(h-30,r.top+Math.min(r.height,50)*.5));
     if (selection) { Object.assign(box.style,{left:`${Math.max(0,r.left)}px`,top:`${Math.max(0,r.top)}px`,width:`${Math.min(Math.max(r.width,25),w*.7,520)}px`,height:`${Math.min(Math.max(r.height,18),200)}px`}); box.setAttribute('data-active',''); }
+    if(role){roleTag.textContent=role;roleTag.style.left=`${x}px`;roleTag.style.top=`${Math.max(4,y-25)}px`;roleTag.setAttribute('data-active','')}else roleTag.removeAttribute('data-active');
     agents.forEach((c,i)=>{ const near = i%3 !== 0; c.style.opacity='1'; c.style.left=`${Math.max(4,Math.min(w-20,near?x+(Math.random()-.5)*170:Math.random()*w))}px`; c.style.top=`${Math.max(4,Math.min(h-20,near?y+(Math.random()-.5)*110:Math.random()*h))}px`; });
   }
-  function restore() { snapshots.forEach(({el,text,hidden,inert})=>{ if(hidden) el.setAttribute('data-ms-hidden',''); else el.removeAttribute('data-ms-hidden'); if(inert) el.setAttribute('inert',''); else el.removeAttribute('inert'); if(text !== null) el.textContent=text; }); box.removeAttribute('data-active'); agents.forEach(c=>c.style.opacity='0'); }
+  function restore() { snapshots.forEach(({el,text,hidden,inert})=>{ if(hidden) el.setAttribute('data-ms-hidden',''); else el.removeAttribute('data-ms-hidden'); if(inert) el.setAttribute('inert',''); else el.removeAttribute('inert'); if(text !== null) el.textContent=text; }); box.removeAttribute('data-active'); roleTag.removeAttribute('data-active'); agents.forEach(c=>c.style.opacity='0'); }
   function report(error) { if (onError) onError(error); else win.console?.error('Mouse Swarm callback or animation failed:',error); }
   function fail(error) { clear(); generation++; restore(); state='error'; report(error); }
   function complete(reason='completed') { clear(); generation++; restore(); next=steps.length; state='complete'; if (onComplete) { try { onComplete({reason, current:steps.length, total:steps.length}); } catch(error) { report(error); } } }
-  function schedule(run) { if (state==='running' && run===generation) timer=win.setTimeout(()=>tick(run),interval); }
+  function delayForNext() { return (next===0?0:interval)+(steps[next]?.delayBefore??0); }
+  function schedule(run,ms=delayForNext()) { if (state==='running' && run===generation) timer=win.setTimeout(()=>tick(run),ms); }
   function tick(run) {
     timer=null;
     if(run!==generation || state!=='running') return;
@@ -82,8 +100,8 @@ export function createSwarmReveal({
       const s=steps[next++];
       if(s.kind==='show') { s.el.removeAttribute('data-ms-hidden'); if(!s.inert) s.el.removeAttribute('inert'); if(autoScroll) s.el.scrollIntoView?.({behavior:'smooth',block:'center'}); }
       else s.el.textContent+=s.text;
-      placeAgents(s.el);
-      if(onStep) onStep({kind:s.kind,element:s.el,current:next,total:steps.length});
+      placeAgents(s.el,s.role);
+      if(onStep) onStep({kind:s.kind,element:s.el,current:next,total:steps.length,...(s.role?{role:s.role}:{})});
     } catch(error) { if(run===generation && state!=='destroyed' && state!=='complete') fail(error); else report(error); return; }
     schedule(run);
   }
@@ -91,11 +109,11 @@ export function createSwarmReveal({
     if(state==='destroyed') throw new Error('swarm reveal has been destroyed');
     clear(); const run=++generation; restore(); next=0; steps=[]; state='running';
     if(isReduced() || items.length===0){complete(isReduced()?'reduced-motion':'empty'); return;}
-    snapshots.forEach(({el,text,inert})=>{
-      el.setAttribute('data-ms-item',''); el.setAttribute('data-ms-hidden',''); el.setAttribute('inert',''); steps.push({kind:'show',el,inert});
-      if(typeText && text !== null){el.textContent=''; const words=text.match(/\s*\S+\s*/g)||[]; for(let i=0;i<words.length;i+=typeWords) steps.push({kind:'type',el,text:words.slice(i,i+typeWords).join('')});}
+    snapshots.forEach(({el,text,inert,delay,role})=>{
+      el.setAttribute('data-ms-item',''); el.setAttribute('data-ms-hidden',''); el.setAttribute('inert',''); steps.push({kind:'show',el,inert,role,delayBefore:delay});
+      if(typeText && text !== null){el.textContent=''; const words=text.match(/\s*\S+\s*/g)||[]; for(let i=0;i<words.length;i+=typeWords) steps.push({kind:'type',el,role,text:words.slice(i,i+typeWords).join('')});}
     });
-    tick(run);
+    if(steps[0]?.delayBefore) schedule(run,steps[0].delayBefore); else tick(run);
   }
   function pause(){if(state==='running'){clear();state='paused';}}
   function resume(){if(state==='paused'){state='running';schedule(generation);}}
@@ -105,3 +123,4 @@ export function createSwarmReveal({
   function getState(){return {status:state,current:next,total:steps.length};}
   return {start,replay:start,pause,resume,skip:()=>{if(state!=='destroyed') complete('skipped');},destroy,getState};
 }
+

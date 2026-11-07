@@ -1,7 +1,8 @@
 export type RevealStatus = 'idle' | 'running' | 'paused' | 'complete' | 'error' | 'destroyed';
 export type CompletionReason = 'completed' | 'skipped' | 'reduced-motion' | 'empty';
 export interface RevealProgress { current: number; total: number }
-export interface RevealStep extends RevealProgress { kind: 'show' | 'type'; element: Element }
+/** role is a visual label supplied by data-swarm-role, not agent telemetry. */
+export interface RevealStep extends RevealProgress { kind: 'show' | 'type'; element: Element; role?: string }
 export interface RevealCompletion extends RevealProgress { reason: CompletionReason }
 export interface RevealOptions {
   root?: Document | Element;
@@ -31,3 +32,4 @@ export interface SwarmReveal {
   getState(): RevealProgress & { status: RevealStatus };
 }
 export declare function createSwarmReveal(options?: RevealOptions): SwarmReveal;
+

@@ -40,9 +40,13 @@ reveal.start();
 
 For static sites, copy `assets/mouse-swarm.js` into a served project directory and replace the import path with that served module path. Serve the site over HTTP; browsers do not resolve bare package names without a bundler or import map. `assets/demo.html` is an interactive configuration reference; use the project's own content and design. Targets cannot be shared by simultaneous instances from the same module. An animation or callback error restores content and reports through `onError`.
 
+## Capture a local page
+
+When the user wants a visual reconstruction, use the optional `mouse-swarm-capture` command on trusted, authorized local HTML. Choose viewport dimensions and verify the resulting sequence editor and output before video export. The result uses static screenshots for one viewport: do not claim that original links or controls work, that the full page was captured, or that external resources were preserved. Scripts are disabled by default; allow them only for explicitly trusted content. See `docs/page-capture.md` in the repository for prerequisites and limitations.
+
 ## Sequencing and interaction
 
-- Mark individual visual units rather than an entire section. Use DOM order for header, headline, supporting copy, cards, and final action; use short leaf text for typed steps. Do not mark nested targets.
+- Mark individual visual units rather than an entire section. Use DOM order for header, headline, supporting copy, cards, and final action; use short leaf text for typed steps. Do not mark nested targets. Set `data-swarm-order` (0 to 100000) to change reveal order without changing DOM semantics, `data-swarm-delay` (0 to 10000 ms) for a per-element delay, and `data-swarm-role` for an illustrative label.
 - Keep replay, pause, resume, and skip outside the selected content. Do not cover interactive elements or hijack scrolling. Use `onStep` for progress and `onComplete` to restore UI state; inspect `getState()` for status and counts.
 - Use `destroy()` before recreating an instance or unmounting a component. Preserve the page's semantics and no-JavaScript content. Respect reduced motion and let the module restore content on errors.
 - For MP4 capture, use the optional local `mouse-swarm-video` command with trusted HTML, or `mouse-swarm-activity-video` with a saved observation recording. Both require Playwright, Chromium, and FFmpeg; a video from observations shows source labels and rescales timing. Specify dimensions and duration; verify the resulting file. Do not present a prerecorded demonstration as a live swarm.

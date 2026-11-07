@@ -39,12 +39,17 @@
     "./playwright": {
       "types": "./src/playwright.d.ts",
       "default": "./src/playwright.js"
+    },
+    "./capture": {
+      "types": "./src/capture.d.ts",
+      "default": "./src/capture.js"
     }
   },
   "bin": {
     "mouse-swarm": "bin/mouse-swarm.js",
     "mouse-swarm-video": "bin/video.js",
-    "mouse-swarm-activity-video": "bin/activity-video.js"
+    "mouse-swarm-activity-video": "bin/activity-video.js",
+    "mouse-swarm-capture": "bin/capture.js"
   },
   "files": [
     "src",
@@ -60,7 +65,7 @@
   ],
   "scripts": {
     "test": "node --test",
-    "prepack": "node --check src/index.js && node --check src/ruflo.js && node --check src/ruflo-view.js && node --check src/ruflo-cli.js && node --check src/ruflo-server.js && node --check bin/mouse-swarm.js && node --check src/activity.js && node --check src/metaharness.js && node --check src/video.js && node --check bin/video.js && node --check bin/activity-video.js && node --check examples/activity-replay.js && node --check src/metaharness-file.js && node --check src/playwright.js && node --check examples/playwright-check.mjs && node --check plugins/mouse-swarm/hooks/register.js"
+    "prepack": "node --check src/index.js && node --check src/ruflo.js && node --check src/ruflo-view.js && node --check src/ruflo-cli.js && node --check src/ruflo-server.js && node --check bin/mouse-swarm.js && node --check src/activity.js && node --check src/metaharness.js && node --check src/video.js && node --check bin/video.js && node --check bin/activity-video.js && node --check examples/activity-replay.js && node --check src/metaharness-file.js && node --check src/playwright.js && node --check examples/playwright-check.mjs && node --check plugins/mouse-swarm/hooks/register.js && node --check src/capture.js && node --check bin/capture.js"
   },
   "repository": {
     "type": "git",

@@ -52,6 +52,17 @@ Install Ruflo's separate mod through its marketplace if you want the status inte
 
 The Mouse Swarm mod observes successful `agent.spawn` hook callbacks in process and counts them without retaining agent IDs, prompts, tool arguments, or task results. When `ruflo-mods` provides its documented `$.ruflo` interface, the mod contributes an optional Mouse Swarm status segment. Run `/mouse-swarm-mod-status` to see the process-local spawn count and, when available, Ruflo's policy mode and route count. If the Ruflo interface is unavailable, the plugin continues without that status integration. An installed Ruflo plugin may still report unavailable if its in-process interface did not load in the current session. It does not automatically install or enable Ruflo mods or change your project configuration.
 
+### If Ruflo reports unavailable
+
+An isolated comparison on Claude Code 2.1.283 found that `ruflo-mods` 0.7.0 did not expose the interface, while upstream 0.16.2 did. This is a verified working version, not a declared minimum. Refresh and update your Ruflo plugin if appropriate for your installation:
+
+```bash
+claude plugin marketplace update ruflo
+claude plugin update ruflo-mods@ruflo --scope user
+```
+
+Restart the Claude Code session to apply the update, then run `/mouse-swarm-mod-status` again. The exact update and installed version depend on your marketplace and scope.
+
 Ruflo's mod documentation states that function hooks are enabled by default in Claude Code 2.1.287 and later. Versions 2.1.277 through 2.1.286 require `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1`. Organization policy, safe mode, or other Claude settings can also prevent mods from loading. See the [Ruflo mod guide](https://github.com/ruvnet/ruflo/tree/main/plugins/ruflo-mods) and [Claude mod documentation](https://code.claude.com/docs/en/plugins/mods/create) for current requirements. The command and skill files remain available when the hook module is not active.
 
 The spawn count is a count of observed hook callbacks, not proof that a task ran. Ruflo's policy and route counters are mod status, not live cursor coordinates. The local browser observer continues to use CLI snapshots; it does not subscribe to the mod's hooks. For observed status and replay, see the [Ruflo guide](ruflo-user-guide.md).

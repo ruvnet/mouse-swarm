@@ -27,7 +27,7 @@ Turn a landing page into a visual build sequence. Elements appear in order while
 | I want to | Start here |
 | --- | --- |
 | Build an animated page with Claude or Codex | [Install the skill](#install-the-skill) or use the [Claude plugin](docs/claude-plugin.md). |
-| Experiment with my own content | Open the [studio](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/studio/) and import a local HTML file as a text outline. |
+| Experiment with my own content | Open the [studio](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/studio/) for a text outline, or [capture a local page](docs/page-capture.md) to preserve its visual appearance. |
 | Observe Ruflo locally | Follow the [Ruflo observation guide](docs/ruflo-user-guide.md). |
 | Replay activity or create an MP4 | Follow the [activity and video guide](docs/activity-and-video.md). |
 | Check a reveal in a browser | Use the [Playwright verification guide](docs/playwright.md). |
@@ -205,6 +205,19 @@ A trusted host can supply normalized agent updates and task status updates. Mark
 
 Use `adapter.replaceAgents(events)` for a complete snapshot. It validates the whole batch and replaces it atomically. For revisioned sources, equal revisions retain the previous agent data; newer revisions update it. The adapter remembers up to twice `maxAgents` recent revisioned removals, so the source must also enforce ordering or prevent delayed events after those removal records are evicted.
 
+## Capture a local page
+
+Capture a trusted local HTML page as a visual reveal, reorder its elements in the generated editor, and export it as a portrait video:
+
+```bash
+npm install github:ruvnet/mouse-swarm playwright
+npx playwright install chromium
+npx mouse-swarm-capture --input ./page.html --output ./captured-page --preset portrait
+npx mouse-swarm-video --input ./captured-page/index.html --output ./reveal.mp4 --preset portrait
+```
+
+Serve `captured-page` over HTTP to use **Edit sequence**, then download and replace `sequence.js` before video export. The capture is a static reconstruction of one viewport: it preserves rendered pixels, not functioning original links or responsive behavior. Source scripts are disabled by default and outside network requests are blocked. See the [page capture guide](docs/page-capture.md) for settings and limitations.
+
 ## Configuration
 
 Pass options to `createSwarmReveal`. Defaults preserve the original reveal behavior.
@@ -212,7 +225,7 @@ Pass options to `createSwarmReveal`. Defaults preserve the original reveal behav
 | Option | Default | Purpose |
 | --- | --- | --- |
 | `root` | `document` | Limit the reveal to a document or element. |
-| `selector` | `[data-swarm-item]` | Select targets in document order. |
+| `selector` | `[data-swarm-item]` | Select targets; document order is the default. |
 | `cursors` | `20` | Number of visual cursors, from 0 to 80. |
 | `interval` | `280` | Milliseconds between reveal steps; minimum 20. |
 | `colors` | Seven preset colors | Array of 1 to 32 cursor color strings. |
@@ -224,7 +237,7 @@ Pass options to `createSwarmReveal`. Defaults preserve the original reveal behav
 | `typeText` | `true` | Type text on marked leaf elements. |
 | `typeWords` | `3` | Words per typing step, from 1 to 50. |
 | `autoScroll` | `false` | Opt in to scrolling to each target. |
-| `onStep` | None | Receive `{ kind, element, current, total }` after a reveal step. |
+| `onStep` | None | Receive `{ kind, element, current, total, role? }` after a reveal step. |
 | `onComplete` | None | Receive `{ reason, current, total }` when a run completes or is skipped. |
 | `onError` | None | Receive an animation or callback error after content is restored. |
 
@@ -251,6 +264,17 @@ reveal.resume();
 ```
 
 `getState()` returns `{ status, current, total }`; status can include `error` if an animation step or callback fails. The original content is restored before `onError` runs. TypeScript declarations are included. Completion reasons are `completed`, `skipped`, `reduced-motion`, and `empty`. Reduced motion is always honored. `autoScroll` is optional because automatic scrolling can interrupt readers. Labels and cursor positions are illustrative, not agent telemetry.
+
+### Per element sequencing
+
+Set optional attributes on selected elements to control the sequence without rearranging the page:
+
+```html
+<h1 data-swarm-item data-swarm-order="1" data-swarm-role="Designer">Build together.</h1>
+<p data-swarm-item data-swarm-order="2" data-swarm-delay="400" data-swarm-type>One element at a time.</p>
+```
+
+`data-swarm-order` is an integer from 0 to 100000. Numbered elements run first in ascending order; ties and unnumbered elements retain document order. `data-swarm-delay` adds 0 to 10000 milliseconds before that element appears. `data-swarm-role` adds a simulated visual label, up to 40 printable characters; it is not agent telemetry. Reduced motion skips the animation and delays.
 
 ## Troubleshooting
 

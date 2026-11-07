@@ -1,5 +1,5 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import {createSwarmReveal} from '../src/index.js';
-function fixture(reduced=false){let queue=[];class E{constructor(tag='div'){this.tag=tag;this.attrs=new Map;this.style={setProperty(k,v){this[k]=v}};this.children=[];this.textContent='';this.ownerDocument=doc} append(x){this.children.push(x)}remove(){this.removed=true}setAttribute(k,v){this.attrs.set(k,v)}removeAttribute(k){this.attrs.delete(k)}hasAttribute(k){return this.attrs.has(k)}getBoundingClientRect(){return{left:100,top:100,bottom:150,width:300,height:50}}}const media={matches:reduced,listener:null,addEventListener(name,fn){this.listener=fn},removeEventListener(){this.listener=null}};const win={innerWidth:1000,innerHeight:800,matchMedia:()=>media,setTimeout(fn){queue.push(fn);return queue.length},clearTimeout(){queue=[]}};const doc={nodeType:9,defaultView:win,head:null,body:null,createElement:tag=>new E(tag),querySelectorAll:()=>items};doc.head=new E;doc.body=new E;const first=new E,second=new E;first.textContent='One two three four five';first.setAttribute('data-swarm-type','');second.textContent='Done';const items=[first,second];return {doc,items,media,advance(){let n=0;while(queue.length&&n++<100)queue.shift()()}}}
+function fixture(reduced=false){let queue=[];const delays=[];class E{constructor(tag='div'){this.tag=tag;this.attrs=new Map;this.style={setProperty(k,v){this[k]=v}};this.children=[];this.textContent='';this.ownerDocument=doc} append(x){this.children.push(x)}remove(){this.removed=true}setAttribute(k,v){this.attrs.set(k,v)}removeAttribute(k){this.attrs.delete(k)}hasAttribute(k){return this.attrs.has(k)}getAttribute(k){return this.attrs.has(k)?this.attrs.get(k):null}getBoundingClientRect(){return{left:100,top:100,bottom:150,width:300,height:50}}}const media={matches:reduced,listener:null,addEventListener(name,fn){this.listener=fn},removeEventListener(){this.listener=null}};const win={innerWidth:1000,innerHeight:800,matchMedia:()=>media,setTimeout(fn,ms){delays.push(ms);queue.push(fn);return queue.length},clearTimeout(){queue=[]}};const doc={nodeType:9,defaultView:win,head:null,body:null,createElement:tag=>new E(tag),querySelectorAll:()=>items};doc.head=new E;doc.body=new E;const first=new E,second=new E;first.textContent='One two three four five';first.setAttribute('data-swarm-type','');second.textContent='Done';const items=[first,second];return {doc,items,media,delays,advance(){let n=0;while(queue.length&&n++<100)queue.shift()()}}}
 test('reveals and types in order, replay, skip, and destroy restore content',()=>{const f=fixture();let calls=0;const r=createSwarmReveal({root:f.doc,cursors:3,interval:25,onComplete:()=>calls++});r.start();assert.equal(f.items[0].textContent,'');assert.equal(f.items[1].hasAttribute('data-ms-hidden'),true);f.advance();assert.equal(f.items[0].textContent,'One two three four five');assert.equal(f.items[1].hasAttribute('data-ms-hidden'),false);assert.equal(calls,1);r.replay();assert.equal(f.items[1].hasAttribute('data-ms-hidden'),true);r.skip();assert.equal(f.items[0].textContent,'One two three four five');r.destroy();assert.equal(f.items[0].hasAttribute('data-ms-item'),false);assert.throws(()=>r.start(),/destroyed/)});
 test('reduced motion reveals immediately without scheduling',()=>{const f=fixture(true);const r=createSwarmReveal({root:f.doc,cursors:0});r.start();assert.equal(f.items[0].textContent,'One two three four five');assert.equal(f.items[0].hasAttribute('data-ms-hidden'),false)});
 test('rejects invalid configuration',()=>{const f=fixture();assert.throws(()=>createSwarmReveal({root:f.doc,interval:0}),RangeError);assert.throws(()=>createSwarmReveal({root:f.doc,cursors:81}),RangeError)});
@@ -18,3 +18,31 @@ test('existing hidden and inert attributes are restored on cleanup',()=>{const f
 test('completion callback errors are reported after content is restored',()=>{const f=fixture();let got;const r=createSwarmReveal({root:f.doc,cursors:0,onComplete(){throw Error('completion failed')},onError:e=>got=e.message});r.start();f.advance();assert.equal(got,'completion failed');assert.equal(r.getState().status,'complete');assert.equal(f.items[0].textContent,'One two three four five')});
 test('an asynchronous step error restores content and cancels later steps',()=>{const f=fixture();let steps=0,errors=0;const r=createSwarmReveal({root:f.doc,cursors:0,onStep(){if(++steps===2)throw Error('failed after scheduling')},onError(){errors++}});r.start();f.advance();assert.equal(steps,2);assert.equal(errors,1);assert.equal(r.getState().status,'error');assert.equal(f.items[0].textContent,'One two three four five');assert.equal(f.items[1].hasAttribute('inert'),false)});
 test('a reduced motion change also completes a paused reveal',()=>{const f=fixture(),reasons=[];const r=createSwarmReveal({root:f.doc,cursors:0,onComplete:e=>reasons.push(e.reason)});r.start();r.pause();f.media.matches=true;f.media.listener({matches:true});assert.equal(r.getState().status,'complete');assert.equal(reasons[0],'reduced-motion');assert.equal(f.items[1].hasAttribute('inert'),false);r.destroy()});
+
+
+
+test('per-element ordering, delay and visual roles control a sequence without mutating content',()=>{
+  const f=fixture(),seen=[];
+  f.items[0].setAttribute('data-swarm-order','2');
+  f.items[1].setAttribute('data-swarm-order','1');
+  f.items[1].setAttribute('data-swarm-delay','300');
+  f.items[1].setAttribute('data-swarm-role','<Designer>');
+  const r=createSwarmReveal({root:f.doc,cursors:1,interval:25,typeText:false,onStep:e=>seen.push(e)});
+  r.start();assert.equal(r.getState().current,0);assert.equal(f.items[1].hasAttribute('inert'),true);assert.deepEqual(f.delays,[300]);
+  f.advance();assert.equal(seen[0].element,f.items[1]);assert.equal(seen[0].role,'<Designer>');assert.equal(seen[1].element,f.items[0]);
+  const roleTag=f.doc.body.children[0].children.at(-1);assert.equal(roleTag.textContent,'<Designer>');assert.equal(f.items[0].textContent,'One two three four five');r.destroy();
+});
+test('sequence attributes are validated before any DOM mutation',()=>{
+  for(const [name,value] of [['data-swarm-order','-1'],['data-swarm-order','100001'],['data-swarm-delay','1.5'],['data-swarm-delay','10001'],['data-swarm-role','x'.repeat(41)],['data-swarm-role','bad\nname']]){
+    const f=fixture();f.items[0].setAttribute(name,value);assert.throws(()=>createSwarmReveal({root:f.doc,cursors:0}));assert.equal(f.doc.body.children.length,0);
+  }
+});
+test('per-element delays do not block reduced-motion users',()=>{
+  const f=fixture(true);f.items[0].setAttribute('data-swarm-delay','10000');const r=createSwarmReveal({root:f.doc,cursors:0});r.start();assert.equal(r.getState().status,'complete');assert.deepEqual(f.delays,[]);r.destroy();
+});
+test('element delay is applied once before its show step, not to typed chunks',()=>{
+  const f=fixture();f.items[1].setAttribute('data-swarm-delay','500');const r=createSwarmReveal({root:f.doc,cursors:0,interval:25,typeWords:3});r.start();f.advance();assert.deepEqual(f.delays,[25,25,525,25]);r.destroy();
+});
+test('pause and resume retain an initial element delay',()=>{
+  const f=fixture();f.items[0].setAttribute('data-swarm-delay','300');const r=createSwarmReveal({root:f.doc,cursors:0,interval:25});r.start();r.pause();f.advance();assert.equal(r.getState().current,0);r.resume();assert.deepEqual(f.delays.slice(0,2),[300,300]);f.advance();assert.equal(r.getState().status,'complete');r.destroy();
+});
