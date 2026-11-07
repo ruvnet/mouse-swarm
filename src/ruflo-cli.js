@@ -8,6 +8,7 @@ const statuses=new Set(['idle','busy','terminated']);
 export function normalizeRufloAgentList(value,{limit=64}={}) {
   if(!Number.isInteger(limit)||limit<1||limit>256) throw new RangeError('limit must be between 1 and 256');
   if(!value||typeof value!=='object'||!Array.isArray(value.agents)) throw new TypeError('expected a Ruflo agent list');
+  if(value.error!==undefined&&value.error!==null&&value.error!=='') throw new TypeError('Ruflo reported an agent list error');
   if(value.agents.length>limit) throw new RangeError('agent list exceeds the configured limit');
   const seen=new Set();
   return value.agents.map(agent=>{

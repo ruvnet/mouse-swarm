@@ -226,7 +226,7 @@ reveal.resume();
 
 The local Ruflo observer can record observed agent snapshot changes in memory, replay them, and download a minimized JSON timeline. A host supplied MetaHarness adapter can map session envelopes into the same format. Observation times and snapshot changes do not prove execution or actual cursor movement.
 
-The sample [visual studio](examples/studio.html) previews reveal settings and imports or exports configuration. The optional MP4 exporter creates portrait 9:11, square, and vertical videos from trusted local HTML. See the [activity and video guide](docs/activity-and-video.md) for setup, limitations, and MetaHarness examples. A [React example](examples/react/SwarmReveal.jsx) and [Cloudflare deployment guide](docs/cloudflare.md) are also available.
+The [visual studio](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/studio/) previews reveal settings, extracts text from local HTML files, and imports or exports configuration. The optional MP4 exporter creates portrait 9:11, square, and vertical videos from trusted local HTML or a saved observation recording. See the [activity and video guide](docs/activity-and-video.md) for setup, limitations, and MetaHarness examples. A [React example](examples/react/SwarmReveal.jsx) and [Cloudflare deployment guide](docs/cloudflare.md) are also available.
 
 ## Video and deployment
 

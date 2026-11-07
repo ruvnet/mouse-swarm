@@ -57,7 +57,7 @@ The isolated list should no longer contain that test agent. Leave other agents u
 
 The local server runs `ruflo agent list --format json` with the directory from which you launched it. It projects each entry to an ID, label, role, and reported status. The label is currently the ID. Unknown status values become `unknown`. It omits the agent's name, task descriptions, prompts, and credentials.
 
-The bridge accepts up to 64 agents by default. It fails the snapshot if the CLI output is invalid, duplicated, oversized, or exceeds that limit. It does not silently show a partial list. The CLI call has a five second timeout. When a poll fails after a successful one, the previous list is marked stale; the server does not return it as fresh.
+The bridge accepts up to 64 agents by default. It fails the snapshot if the CLI output is invalid, duplicated, oversized, or exceeds that limit. It does not silently show a partial list. An agent absent from a later filtered list is not proof that the agent was deleted. The CLI call has a five second timeout. When a poll fails after a successful one, the previous list is marked stale; the server does not return it as fresh.
 
 For a direct connection check while the server is running:
 

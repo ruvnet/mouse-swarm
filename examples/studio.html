@@ -11,11 +11,12 @@
 <header><div class="brand"><b>✳</b> Mouse Swarm Studio</div><a href="https://github.com/ruvnet/mouse-swarm">Documentation</a></header>
 <main>
 <section class="panel" aria-labelledby="settings-title">
-<h1 id="settings-title">Build your reveal</h1><p class="hint">Edit the sample content and animation. Your configuration stays on this device until you export it.</p>
-<label class="field" for="headline">Headline<input id="headline" type="text" maxlength="120" value="Build something together."></label>
+<h1 id="settings-title">Build your reveal</h1><p class="hint">Edit the sample or import an HTML file you own. The import extracts text only; original styling, images, links, scripts, and layout are not retained. Nothing is uploaded.</p>
+<label class="filename" for="html-import">Import local HTML file<input id="html-import" type="file" accept="text/html,.html,.htm"></label><div class="buttons"><button id="use-sample" type="button">Use sample page</button></div><p id="import-state" class="hint" role="status">Using the sample page.</p>
+<div id="sample-content"><label class="field" for="headline">Headline<input id="headline" type="text" maxlength="120" value="Build something together."></label>
 <label class="field" for="description">Description<textarea id="description" rows="3" maxlength="280">Give your landing page a reveal that feels collaborative, one element at a time.</textarea></label>
 <label class="field" for="action">Call to action<input id="action" type="text" maxlength="50" value="Explore Ruflo"></label>
-<div class="fields">
+</div><div class="fields">
 <label class="field" for="cursors">Cursors <output id="cursors-output">20</output><input id="cursors" type="range" min="0" max="80" value="20"></label>
 <label class="field" for="interval">Step interval <output id="interval-output">220 ms</output><input id="interval" type="range" min="20" max="1000" step="20" value="220"></label>
 <label class="field" for="words">Words per step <output id="words-output">2</output><input id="words" type="range" min="1" max="20" value="2"></label>
@@ -25,16 +26,17 @@
 </div>
 <label class="check"><input id="selection" type="checkbox" checked>Show selection outline</label>
 <label class="check"><input id="typing" type="checkbox" checked>Type marked text</label>
-<fieldset><legend>Items to reveal</legend><label class="check"><input type="checkbox" data-target="eyebrow" checked>Eyebrow</label><label class="check"><input type="checkbox" data-target="headline" checked>Headline</label><label class="check"><input type="checkbox" data-target="description" checked>Description</label><label class="check"><input type="checkbox" data-target="coordinate" checked>Coordinate card</label><label class="check"><input type="checkbox" data-target="compose" checked>Compose card</label><label class="check"><input type="checkbox" data-target="replay" checked>Replay card</label><label class="check"><input type="checkbox" data-target="action" checked>Call to action</label></fieldset>
+<fieldset id="sample-targets"><legend>Sample items to reveal</legend><label class="check"><input type="checkbox" data-target="eyebrow" checked>Eyebrow</label><label class="check"><input type="checkbox" data-target="headline" checked>Headline</label><label class="check"><input type="checkbox" data-target="description" checked>Description</label><label class="check"><input type="checkbox" data-target="coordinate" checked>Coordinate card</label><label class="check"><input type="checkbox" data-target="compose" checked>Compose card</label><label class="check"><input type="checkbox" data-target="replay" checked>Replay card</label><label class="check"><input type="checkbox" data-target="action" checked>Call to action</label></fieldset>
+<fieldset id="import-targets" hidden><legend>Imported items to reveal</legend><div id="import-target-list"></div></fieldset>
 <div class="buttons"><button id="preview" class="primary" type="button">Apply and replay</button><button id="pause" type="button">Pause</button><button id="resume" type="button">Resume</button><button id="skip" type="button">Skip</button></div>
 <p id="status" class="status" role="status" aria-live="polite">Ready.</p>
 <div class="buttons"><button id="export" type="button">Download JSON</button></div>
 <label class="filename" for="import">Load a studio JSON file<input id="import" type="file" accept="application/json,.json"></label>
-<footer><p>Sample preview only. Cursors are simulated and do not represent observed agent activity. This tool does not fetch websites or export video.</p></footer>
+<footer><p>Imported HTML is converted to text only and may not include every item. Cursors are simulated. This tool does not fetch websites or export video.</p></footer>
 </section>
 <section class="panel canvas" aria-label="Reveal preview">
 <div class="canvashead"><span>LIVE PREVIEW</span><span>SIMULATED CURSORS</span></div>
-<div class="preview" id="reveal"><div class="eyebrow" data-studio-target="eyebrow" data-swarm-item>ONE IDEA · MANY MOVING PARTS</div><h2 class="hero" data-studio-target="headline" data-swarm-item data-swarm-type id="preview-headline">Build something together.</h2><p class="description" data-studio-target="description" data-swarm-item data-swarm-type id="preview-description">Give your landing page a reveal that feels collaborative, one element at a time.</p><div class="cards"><div class="card" data-studio-target="coordinate" data-swarm-item>Coordinate the work.</div><div class="card" data-studio-target="compose" data-swarm-item>Compose the page.</div><div class="card" data-studio-target="replay" data-swarm-item>Replay the reveal.</div></div><a class="preview-action" data-studio-target="action" data-swarm-item id="preview-action" href="https://github.com/ruvnet/ruflo">Explore Ruflo</a></div>
+<div class="preview" id="reveal"><div class="eyebrow" data-studio-target="eyebrow" data-swarm-item>ONE IDEA · MANY MOVING PARTS</div><h2 class="hero" data-studio-target="headline" data-swarm-item data-swarm-type id="preview-headline">Build something together.</h2><p class="description" data-studio-target="description" data-swarm-item data-swarm-type id="preview-description">Give your landing page a reveal that feels collaborative, one element at a time.</p><div class="cards"><div class="card" data-studio-target="coordinate" data-swarm-item>Coordinate the work.</div><div class="card" data-studio-target="compose" data-swarm-item>Compose the page.</div><div class="card" data-studio-target="replay" data-swarm-item>Replay the reveal.</div></div><a class="preview-action" data-studio-target="action" data-swarm-item id="preview-action" href="https://github.com/ruvnet/ruflo">Explore Ruflo</a></div><div class="preview" id="import-preview" hidden></div>
 </section>
 </main>
 <script type="module" src="./studio.js"></script>
