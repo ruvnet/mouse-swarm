@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 260" role="img" aria-labelledby="title desc">
+<title id="title">A page builds one element at a time</title><desc id="desc">Animated cursor markers move over a sequence of interface elements.</desc>
+<rect width="1000" height="260" rx="22" fill="#0b1115"/><rect x="1" y="1" width="998" height="258" rx="21" fill="none" stroke="#283b3c"/>
+<text x="35" y="48" fill="#d5fb8d" font-family="Arial,sans-serif" font-size="14" font-weight="bold" letter-spacing="2">THE REVEAL SEQUENCE</text><text x="35" y="79" fill="#eef7ef" font-family="Arial,sans-serif" font-size="23" font-weight="bold">One element at a time.</text>
+<g font-family="Arial,sans-serif" font-size="13" fill="#a9bcb3"><text x="55" y="226">01  Structure</text><text x="298" y="226">02  Headline</text><text x="541" y="226">03  Content</text><text x="784" y="226">04  Action</text></g>
+<g fill="#15231f" stroke="#314c3e"><rect x="35" y="105" width="210" height="92" rx="10"/><rect x="278" y="105" width="210" height="92" rx="10"/><rect x="521" y="105" width="210" height="92" rx="10"/><rect x="764" y="105" width="201" height="92" rx="10"/></g>
+<path d="M65 130h150 M65 146h100 M65 162h130" stroke="#506e5b" stroke-width="7" stroke-linecap="round"/>
+<g fill="#c9f678"><rect x="302" y="129" width="155" height="12" rx="4"><animate attributeName="width" values="0;155;155;0" keyTimes="0;.23;.8;1" dur="6s" repeatCount="indefinite"/></rect><rect x="302" y="153" width="105" height="8" rx="4" opacity=".5"/></g>
+<g fill="#7dc9fc"><rect x="544" y="130" width="158" height="7" rx="3"/><rect x="544" y="148" width="140" height="7" rx="3"/><rect x="544" y="166" width="104" height="7" rx="3"/><animate attributeName="opacity" values=".15;.15;1;1;.15" keyTimes="0;.25;.46;.8;1" dur="6s" repeatCount="indefinite"/></g>
+<g><rect x="785" y="134" width="118" height="32" rx="8" fill="#c9f678"/><text x="808" y="155" fill="#112018" font-family="Arial,sans-serif" font-size="12" font-weight="bold">GET STARTED</text><animate attributeName="opacity" values=".2;.2;1;1;.2" keyTimes="0;.5;.67;.8;1" dur="6s" repeatCount="indefinite"/></g>
+<g><path d="M0 0v22l6-5 5 10 4-2-5-10h10z" fill="#ffad72" stroke="#0b1115" stroke-width="2"/><animateTransform attributeName="transform" type="translate" values="70 110;305 112;550 112;790 112;70 110" dur="6s" repeatCount="indefinite"/></g>
+</svg>

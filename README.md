@@ -6,7 +6,19 @@ Turn a landing page into a visual build sequence. Elements appear in order while
 
 [See the live reveal](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/) · [Try the interactive playground](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/demo/) · [Watch the 9:11 promo](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4) · [Ruflo](https://github.com/ruvnet/ruflo)
 
-**The swarm is simulated.** It does not control a computer, run agents, or report live agent activity.
+**Two ways to use it:** the page reveal is simulated visual choreography. The optional local Ruflo view reads reported agent registrations and statuses. Neither mode controls a computer or starts agents.
+
+[Reveal quick start](#quick-start-build-a-reveal) · [Install the skill](#install-the-skill) · [Ruflo observation](#observe-a-local-ruflo-swarm) · [Configuration](#configuration) · [Troubleshooting](#troubleshooting)
+
+[![Animated reveal sequence](assets/swarm-sequence.svg)](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/demo/)
+
+| Capability | What it does |
+| --- | --- |
+| Sequential reveal | Shows page elements in document order and optionally types leaf text. |
+| Cursor choreography | Adds configurable visual cursors, colors, labels, and selection effects. |
+| Playback | Exposes replay, pause, resume, skip, progress, and cleanup. |
+| Ruflo observation | Shows local CLI agent registrations and reported status. |
+| Agent skills | Installs reusable instructions and assets for Claude Code and Codex. |
 
 ## Install the skill
 
@@ -16,7 +28,7 @@ From your project directory, run:
 npx skills add ruvnet/mouse-swarm --skill mouse-swarm-reveal -a claude-code -a codex -y --copy
 ```
 
-This installs the skill and its bundled browser module for both Claude Code and Codex. Use `-a claude-code` or `-a codex` to target one agent. Omit `-y` to review the installer prompts, or add `-g` to install globally. The current `skills` CLI requires Node.js 22.20 or later; check your installed CLI version for its requirements.
+This installs the skill and its bundled browser modules for both Claude Code and Codex. Use `-a claude-code` or `-a codex` to target one agent. Omit `-y` to review the installer prompts, or add `-g` to install globally. The current `skills` CLI requires Node.js 22.20 or later; check your installed CLI version for its requirements.
 
 Then ask your agent:
 
@@ -27,12 +39,71 @@ Then ask your agent:
 - A portable `SKILL.md` with the integration and validation workflow.
 - A dependency-free browser module in `assets/mouse-swarm.js`.
 - A standalone example in `assets/demo.html`.
+- Ruflo adapter and view modules in `assets/ruflo.js` and `assets/ruflo-view.js`.
 
 The installer is a separate tool. Review the skill before use, and use `--copy` when you want independent copies instead of symlinks.
 
+## Quick start: build a reveal
+
+**Requirements:** Node.js 18 or later for the package. The `skills` installer can have a newer Node requirement; check its output if installation fails.
+
+1. Create a project directory and install the package from GitHub. The npm registry release is pending.
+
+```bash
+mkdir swarm-example
+cd swarm-example
+npm install github:ruvnet/mouse-swarm
+cp node_modules/@ruvector/mouse-swarm/src/index.js ./mouse-swarm.js
+```
+
+2. Save the following as `index.html`. The order of the `data-swarm-item` elements is the order in which they appear. Keep controls outside the reveal targets so they remain available.
+
+```html
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Swarm reveal</title></head>
+<body>
+  <main>
+    <h1 data-swarm-item data-swarm-type>Build something together.</h1>
+    <p data-swarm-item data-swarm-type>Give ideas room to grow.</p>
+    <a data-swarm-item href="https://github.com/ruvnet/ruflo">Explore Ruflo</a>
+  </main>
+  <nav aria-label="Animation controls">
+    <button id="replay">Replay</button>
+    <button id="pause">Pause</button>
+    <button id="resume">Resume</button>
+    <button id="skip">Skip animation</button>
+  </nav>
+  <script type="module">
+    import { createSwarmReveal } from './mouse-swarm.js';
+    const reveal = createSwarmReveal({ cursors: 20, interval: 280 });
+    document.querySelector('#replay').addEventListener('click', reveal.replay);
+    document.querySelector('#pause').addEventListener('click', reveal.pause);
+    document.querySelector('#resume').addEventListener('click', reveal.resume);
+    document.querySelector('#skip').addEventListener('click', reveal.skip);
+    reveal.start();
+  </script>
+</body>
+</html>
+```
+
+3. Serve the folder over HTTP, then open `http://localhost:8000`:
+
+```bash
+python3 -m http.server 8000
+```
+
+The complete page remains readable without JavaScript. To use an existing bundler, import the package directly instead of copying the browser module:
+
+```js
+import { createSwarmReveal } from '@ruvector/mouse-swarm';
+```
+
+[![Animated playback controls](assets/swarm-controls.svg)](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/demo/)
+
 ## Use the browser module
 
-The npm registry release is pending. Install the package directly from GitHub:
+For an existing project, install from GitHub:
 
 ```bash
 npm install github:ruvnet/mouse-swarm
@@ -60,13 +131,15 @@ The overlay is pointer transparent and respects reduced motion, including change
 
 ## Observe a local Ruflo swarm
 
+[![Animated Ruflo observation flow](assets/ruflo-observe.svg)](https://github.com/ruvnet/ruflo)
+
 The library includes an **opt in, read only** bridge for a locally installed Ruflo CLI. From the Ruflo project you want to observe:
 
 ```bash
 npx --yes --package=github:ruvnet/mouse-swarm mouse-swarm observe --port 4173
 ```
 
-Open `http://127.0.0.1:4173/` on that same machine. The server polls `ruflo agent list --format json` in the current directory. It is bound to loopback, serves a bounded snapshot, and exposes only agent IDs, roles, and reported statuses. It never starts agents or runs tasks. Agent registrations and status values do not by themselves prove execution.
+Open `http://127.0.0.1:4173/` on that same machine. Stop the server with Ctrl+C. Install the Ruflo CLI first and check `ruflo agent list --format json` in the same project directory. The server polls `ruflo agent list --format json` in the current directory. It is bound to loopback, serves a bounded snapshot, and exposes only agent IDs, roles, and reported statuses. It never starts agents or runs tasks. Agent registrations and status values do not by themselves prove execution.
 
 The Ruflo CLI does not provide cursor coordinates. The live status view shows a list when positions are unavailable; it never invents cursor movements. The separate landing page reveal remains a simulation. Task descriptions, prompts, and credentials are excluded from the local CLI bridge. Do not expose the local status server to the public internet.
 
@@ -134,6 +207,18 @@ reveal.resume();
 ```
 
 `getState()` returns `{ status, current, total }`; status can include `error` if an animation step or callback fails. The original content is restored before `onError` runs. TypeScript declarations are included. Completion reasons are `completed`, `skipped`, `reduced-motion`, and `empty`. Reduced motion is always honored. `autoScroll` is optional because automatic scrolling can interrupt readers. Labels and cursor positions are illustrative, not agent telemetry.
+
+## Troubleshooting
+
+| Symptom | Check |
+| --- | --- |
+| Nothing animates | Check the console, that `start()` runs after the targets exist, and that the selector matches. Reduced motion intentionally skips the animation. |
+| Module import fails | Serve the files over HTTP and verify the import path. Browsers cannot resolve npm package names without a bundler or import map. |
+| Elements remain hidden or conflict | Avoid selecting nested targets or sharing targets between active instances. Call `destroy()` when the owning component is removed. |
+| Ruflo view is empty | Run `ruflo agent list --format json` in the same project. An empty list means no registrations were reported, not that the connection failed. |
+| Ruflo view reports an error | Confirm that the CLI is installed, on PATH, responds within five seconds, and emits valid JSON. The view keeps previous entries marked stale after a failed poll. |
+| Port is in use | Pass a different port, for example `mouse-swarm observe --port 4180`. Open the printed URL on the same machine. |
+| MP4 download is needed | Record or render the animation separately. The browser module does not create MP4 files. |
 
 ## Video and deployment
 
