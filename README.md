@@ -6,12 +6,14 @@ Build a landing page as a sequence of visible elements while simulated cursors a
 
 The cursors are an animation. They are not actual agent actions, telemetry, or computer control.
 
+**Registry status:** The npm registry release is pending. Install from GitHub using the commands below.
+
 ## Install the skill
 
 From your project directory:
 
 ```sh
-npx @ruvector/mouse-swarm init
+npx --yes --package=github:ruvnet/mouse-swarm- mouse-swarm init
 ```
 
 This installs the skill and its bundled browser module in `.claude/skills/mouse-swarm-reveal` and `.agents/skills/mouse-swarm-reveal`. Use `--claude` or `--codex` to install only one. Existing directories are protected unless `--force` is provided; back up your edits before using it.
@@ -21,7 +23,7 @@ Ask your agent: “Use the mouse swarm reveal skill to animate this landing page
 ## Use the browser module
 
 ```sh
-npm install @ruvector/mouse-swarm
+npm install github:ruvnet/mouse-swarm-
 ```
 
 ```html
