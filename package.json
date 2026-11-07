@@ -4,12 +4,37 @@
   "description": "Sequential landing page reveals with simulated mouse swarms and installable Claude Code and Codex skills.",
   "type": "module",
   "exports": "./src/index.js",
-  "bin": { "mouse-swarm": "./bin/mouse-swarm.js" },
-  "files": ["src", "bin", "skills", "examples", "README.md", "LICENSE"],
-  "scripts": { "test": "node --test", "prepack": "node --check src/index.js && node --check bin/mouse-swarm.js" },
-  "repository": { "type": "git", "url": "https://github.com/ruvnet/mouse-swarm-.git" },
+  "bin": {
+    "mouse-swarm": "bin/mouse-swarm.js"
+  },
+  "files": [
+    "src",
+    "bin",
+    "skills",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "prepack": "node --check src/index.js && node --check bin/mouse-swarm.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruvnet/mouse-swarm-.git"
+  },
   "homepage": "https://github.com/ruvnet/mouse-swarm-#readme",
   "license": "MIT",
-  "engines": { "node": ">=18" },
-  "keywords": ["mouse", "swarm", "animation", "reveal", "codex", "claude", "skill"]
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mouse",
+    "swarm",
+    "animation",
+    "reveal",
+    "codex",
+    "claude",
+    "skill"
+  ]
 }
