@@ -131,6 +131,8 @@ The overlay is pointer transparent and respects reduced motion, including change
 
 ## Observe a local Ruflo swarm
 
+[Read the complete Ruflo user guide](docs/ruflo-user-guide.md) for setup, verification, custom integration, and troubleshooting.
+
 [![Animated Ruflo observation flow](assets/ruflo-observe.svg)](https://github.com/ruvnet/ruflo)
 
 The library includes an **opt in, read only** bridge for a locally installed Ruflo CLI. From the Ruflo project you want to observe:
