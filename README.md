@@ -4,7 +4,7 @@
 
 Turn a landing page into a visual build sequence. Elements appear in order while a swarm of colored cursors and agent markers moves around them.
 
-[See the live reveal](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/) · [Watch the 9:11 promo](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4) · [Ruflo](https://github.com/ruvnet/ruflo)
+[See the live reveal](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/) · [Try the interactive playground](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/demo/) · [Watch the 9:11 promo](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4) · [Ruflo](https://github.com/ruvnet/ruflo)
 
 **The swarm is simulated.** It does not control a computer, run agents, or report live agent activity.
 
@@ -56,7 +56,7 @@ reveal.start();
 // Optional: reveal.replay() and reveal.destroy()
 ```
 
-The overlay is pointer transparent and respects reduced motion. Use one instance per root and call `destroy()` when the component unmounts. Avoid marking both a parent and its descendants as reveal targets. Serve `examples/` over HTTP to try the sample without a build tool.
+The overlay is pointer transparent and respects reduced motion, including changes during playback. Hidden targets are temporarily inert so keyboard users cannot focus invisible content. Overlapping targets cannot be owned by two instances from the same module; call `destroy()` when the component unmounts. Avoid marking both a parent and its descendants as reveal targets. Serve `examples/` over HTTP to try the interactive playground without a build tool.
 
 ## Configuration
 
@@ -79,6 +79,7 @@ Pass options to `createSwarmReveal`. Defaults preserve the original reveal behav
 | `autoScroll` | `false` | Opt in to scrolling to each target. |
 | `onStep` | None | Receive `{ kind, element, current, total }` after a reveal step. |
 | `onComplete` | None | Receive `{ reason, current, total }` when a run completes or is skipped. |
+| `onError` | None | Receive an animation or callback error after content is restored. |
 
 ```js
 const reveal = createSwarmReveal({
@@ -93,7 +94,8 @@ const reveal = createSwarmReveal({
   selection: true,
   autoScroll: false,
   onStep: ({ current, total }) => console.log(`${current}/${total}`),
-  onComplete: ({ reason }) => console.log(reason)
+  onComplete: ({ reason }) => console.log(reason),
+  onError: (error) => console.error(error)
 });
 reveal.start();
 reveal.pause();
@@ -101,7 +103,7 @@ reveal.resume();
 // Also available: reveal.replay(), reveal.skip(), reveal.getState(), reveal.destroy().
 ```
 
-`getState()` returns `{ status, current, total }`. Completion reasons are `completed`, `skipped`, `reduced-motion`, and `empty`. Reduced motion is always honored. `autoScroll` is optional because automatic scrolling can interrupt readers. Labels and cursor positions are illustrative, not agent telemetry.
+`getState()` returns `{ status, current, total }`; status can include `error` if an animation step or callback fails. The original content is restored before `onError` runs. TypeScript declarations are included. Completion reasons are `completed`, `skipped`, `reduced-motion`, and `empty`. Reduced motion is always honored. `autoScroll` is optional because automatic scrolling can interrupt readers. Labels and cursor positions are illustrative, not agent telemetry.
 
 ## Video and deployment
 

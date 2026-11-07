@@ -36,5 +36,6 @@
     "codex",
     "claude",
     "skill"
-  ]
+  ],
+  "types": "./src/index.d.ts"
 }

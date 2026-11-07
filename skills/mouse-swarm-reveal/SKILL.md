@@ -23,7 +23,8 @@ const reveal = createSwarmReveal({
   labels: ['Scout', 'Builder', 'Reviewer'], botEvery: 4,
   cursorSize: 18, cursorSpeed: 600, selection: true,
   typeText: true, typeWords: 2, autoScroll: false,
-  onStep: ({ current, total }) => { /* update progress */ }
+  onStep: ({ current, total }) => { /* update progress */ },
+  onError: (error) => { /* report the failure */ }
 });
 reveal.start();
 // Connect controls to reveal.replay(), reveal.pause(), reveal.resume(), and reveal.skip().
@@ -31,12 +32,12 @@ reveal.start();
 // Call reveal.destroy() during cleanup.
 ```
 
-For static sites, replace the import path with the served path to the copied module. `assets/demo.html` is a minimal reference; use the project's own content and design.
+For static sites, replace the import path with the served path to the copied module. `assets/demo.html` is an interactive configuration reference; use the project's own content and design. Targets cannot be shared by simultaneous instances from the same module. An animation or callback error restores content and reports through `onError`.
 
 ## Validation
 
 - Check the initial sequence, final page, replay, pause, resume, skip, and teardown. Validate custom values and progress callbacks. Confirm that links and controls remain usable and the overlay does not intercept clicks.
-- Check narrow and wide viewports and reduced motion. Keep content readable without JavaScript and avoid forcing the user's scroll position.
+- Check narrow and wide viewports, reduced motion changes during playback, callback failures, and keyboard focus while targets are hidden. Keep content readable without JavaScript and avoid forcing the user's scroll position.
 - Preserve the original text, HTML semantics, and destination links. Never collect visitor data or send content elsewhere as part of the effect.
 - If video is requested, use a separate screen recording or rendering workflow and verify the requested format and dimensions. This module does not create MP4 files.
 

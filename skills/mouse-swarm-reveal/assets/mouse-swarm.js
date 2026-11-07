@@ -1,4 +1,5 @@
 /** Visual-only cursor choreography. No telemetry, network calls, OS input, or agents. */
+const OWNERS = new WeakMap();
 const DEFAULT_COLORS = ['#cef575','#70c9f9','#c9acff','#ffb37a','#ed81ba','#8ee6ce','#f8d66a'];
 const css = `
 [data-ms-item]{transition:opacity .35s ease,transform .4s ease,filter .35s ease}
@@ -20,7 +21,7 @@ export function createSwarmReveal({
   root = document, selector = '[data-swarm-item]', cursors = 20, interval = 280,
   typeText = true, typeWords = 3, colors = DEFAULT_COLORS, botEvery = 5,
   cursorSize = 15, cursorSpeed = 700, selection = true, labels = [],
-  autoScroll = false, onStep, onComplete
+  autoScroll = false, onStep, onComplete, onError
 } = {}) {
   if (!root || typeof root.querySelectorAll !== 'function') throw new TypeError('root must support querySelectorAll');
   if (typeof selector !== 'string' || !selector) throw new TypeError('selector must be a non-empty string');
@@ -35,11 +36,15 @@ export function createSwarmReveal({
   if (typeof typeText !== 'boolean' || typeof selection !== 'boolean' || typeof autoScroll !== 'boolean') throw new TypeError('typeText, selection and autoScroll must be booleans');
   if (onStep !== undefined && typeof onStep !== 'function') throw new TypeError('onStep must be a function');
   if (onComplete !== undefined && typeof onComplete !== 'function') throw new TypeError('onComplete must be a function');
+  if (onError !== undefined && typeof onError !== 'function') throw new TypeError('onError must be a function');
   const doc = root.nodeType === 9 ? root : root.ownerDocument;
   const win = doc.defaultView;
   const items = [...root.querySelectorAll(selector)];
-  const snapshots = items.map(el => ({el, text: el.hasAttribute('data-swarm-type') && el.children.length === 0 ? el.textContent : null, hadItem: el.hasAttribute('data-ms-item'), hidden: el.hasAttribute('data-ms-hidden')}));
-  const reduced = !!win.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (items.some(el => OWNERS.has(el))) throw new Error('reveal targets are already owned by another instance');
+  const snapshots = items.map(el => ({el, text: el.hasAttribute('data-swarm-type') && el.children.length === 0 ? el.textContent : null, hadItem: el.hasAttribute('data-ms-item'), hidden: el.hasAttribute('data-ms-hidden'), inert: el.hasAttribute('inert')}));
+  const motion = win.matchMedia?.('(prefers-reduced-motion: reduce)');
+  const isReduced = () => !!motion?.matches;
+  const owner = {};
   const style = doc.createElement('style'); style.textContent = css; doc.head.append(style);
   const overlay = doc.createElement('div'); overlay.className = 'ms-overlay'; overlay.setAttribute('aria-hidden','true');
   const box = doc.createElement('div'); box.className = 'ms-selection'; overlay.append(box);
@@ -52,10 +57,11 @@ export function createSwarmReveal({
     overlay.append(c); return c;
   });
   doc.body.append(overlay);
+  items.forEach(el => OWNERS.set(el,owner));
   let timer = null, generation = 0, next = 0, steps = [], state = 'idle';
   function clear() { if (timer !== null) win.clearTimeout(timer); timer = null; }
   function placeAgents(el) {
-    if (!el || reduced) return;
+    if (!el || isReduced()) return;
     const r = el.getBoundingClientRect(), w = win.innerWidth, h = win.innerHeight;
     if (r.bottom < 0 || r.top > h) { box.removeAttribute('data-active'); return; }
     const x = Math.max(8,Math.min(w-30,r.left+Math.min(r.width,220)*.6));
@@ -63,33 +69,39 @@ export function createSwarmReveal({
     if (selection) { Object.assign(box.style,{left:`${Math.max(0,r.left)}px`,top:`${Math.max(0,r.top)}px`,width:`${Math.min(Math.max(r.width,25),w*.7,520)}px`,height:`${Math.min(Math.max(r.height,18),200)}px`}); box.setAttribute('data-active',''); }
     agents.forEach((c,i)=>{ const near = i%3 !== 0; c.style.opacity='1'; c.style.left=`${Math.max(4,Math.min(w-20,near?x+(Math.random()-.5)*170:Math.random()*w))}px`; c.style.top=`${Math.max(4,Math.min(h-20,near?y+(Math.random()-.5)*110:Math.random()*h))}px`; });
   }
-  function restore() { snapshots.forEach(({el,text})=>{el.removeAttribute('data-ms-hidden'); if(text !== null) el.textContent=text;}); box.removeAttribute('data-active'); agents.forEach(c=>c.style.opacity='0'); }
-  function complete(reason='completed') { clear(); generation++; restore(); next=steps.length; state='complete'; if (onComplete) onComplete({reason, current:steps.length, total:steps.length}); }
+  function restore() { snapshots.forEach(({el,text,hidden,inert})=>{ if(hidden) el.setAttribute('data-ms-hidden',''); else el.removeAttribute('data-ms-hidden'); if(inert) el.setAttribute('inert',''); else el.removeAttribute('inert'); if(text !== null) el.textContent=text; }); box.removeAttribute('data-active'); agents.forEach(c=>c.style.opacity='0'); }
+  function report(error) { if (onError) onError(error); else win.console?.error('Mouse Swarm callback or animation failed:',error); }
+  function fail(error) { clear(); generation++; restore(); state='error'; report(error); }
+  function complete(reason='completed') { clear(); generation++; restore(); next=steps.length; state='complete'; if (onComplete) { try { onComplete({reason, current:steps.length, total:steps.length}); } catch(error) { report(error); } } }
   function schedule(run) { if (state==='running' && run===generation) timer=win.setTimeout(()=>tick(run),interval); }
   function tick(run) {
     timer=null;
     if(run!==generation || state!=='running') return;
     if(next>=steps.length){complete();return;}
-    const s=steps[next++];
-    if(s.kind==='show') { s.el.removeAttribute('data-ms-hidden'); if(autoScroll) s.el.scrollIntoView?.({behavior:'smooth',block:'center'}); }
-    else s.el.textContent+=s.text;
-    placeAgents(s.el);
-    if(onStep) onStep({kind:s.kind,element:s.el,current:next,total:steps.length});
+    try {
+      const s=steps[next++];
+      if(s.kind==='show') { s.el.removeAttribute('data-ms-hidden'); if(!s.inert) s.el.removeAttribute('inert'); if(autoScroll) s.el.scrollIntoView?.({behavior:'smooth',block:'center'}); }
+      else s.el.textContent+=s.text;
+      placeAgents(s.el);
+      if(onStep) onStep({kind:s.kind,element:s.el,current:next,total:steps.length});
+    } catch(error) { if(run===generation && state!=='destroyed' && state!=='complete') fail(error); else report(error); return; }
     schedule(run);
   }
   function start() {
     if(state==='destroyed') throw new Error('swarm reveal has been destroyed');
     clear(); const run=++generation; restore(); next=0; steps=[]; state='running';
-    if(reduced || items.length===0){complete(reduced?'reduced-motion':'empty'); return;}
-    snapshots.forEach(({el,text})=>{
-      el.setAttribute('data-ms-item',''); el.setAttribute('data-ms-hidden',''); steps.push({kind:'show',el});
+    if(isReduced() || items.length===0){complete(isReduced()?'reduced-motion':'empty'); return;}
+    snapshots.forEach(({el,text,inert})=>{
+      el.setAttribute('data-ms-item',''); el.setAttribute('data-ms-hidden',''); el.setAttribute('inert',''); steps.push({kind:'show',el,inert});
       if(typeText && text !== null){el.textContent=''; const words=text.match(/\s*\S+\s*/g)||[]; for(let i=0;i<words.length;i+=typeWords) steps.push({kind:'type',el,text:words.slice(i,i+typeWords).join('')});}
     });
     tick(run);
   }
   function pause(){if(state==='running'){clear();state='paused';}}
   function resume(){if(state==='paused'){state='running';schedule(generation);}}
-  function destroy(){if(state==='destroyed')return;clear();generation++;restore();snapshots.forEach(({el,hadItem,hidden})=>{if(!hadItem)el.removeAttribute('data-ms-item');if(hidden)el.setAttribute('data-ms-hidden','')});style.remove();overlay.remove();state='destroyed';}
+  function motionChanged(event){if(event.matches && (state==='running'||state==='paused')) complete('reduced-motion');}
+  if(motion?.addEventListener) motion.addEventListener('change',motionChanged); else motion?.addListener?.(motionChanged);
+  function destroy(){if(state==='destroyed')return;clear();generation++;restore();snapshots.forEach(({el,hadItem})=>{if(!hadItem)el.removeAttribute('data-ms-item');if(OWNERS.get(el)===owner)OWNERS.delete(el)});if(motion?.removeEventListener)motion.removeEventListener('change',motionChanged);else motion?.removeListener?.(motionChanged);style.remove();overlay.remove();state='destroyed';}
   function getState(){return {status:state,current:next,total:steps.length};}
   return {start,replay:start,pause,resume,skip:()=>{if(state!=='destroyed') complete('skipped');},destroy,getState};
 }
