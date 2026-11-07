@@ -20,6 +20,22 @@ Turn a landing page into a visual build sequence. Elements appear in order while
 | Ruflo observation | Shows local CLI agent registrations and reported status. |
 | Agent skills | Installs reusable instructions and assets for Claude Code and Codex. |
 
+## See it in action
+
+**Landing page reveal.** Watch the simulated swarm assemble the Ruflo page one element at a time.
+
+[![Screenshot of the Ruflo landing page being revealed by simulated cursors](assets/screenshots/reveal.jpg)](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/)
+
+**Studio.** Tune the sequence or import a local HTML file as a selectable text outline.
+
+[![Screenshot of Mouse Swarm Studio with its preview and settings](assets/screenshots/studio.jpg)](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/studio/)
+
+**Playground.** Try cursor counts, timing, and playback controls in the browser.
+
+[![Screenshot of the interactive reveal playground](assets/screenshots/playground.jpg)](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/demo/)
+
+The screenshots show the public demos. Their cursors are simulated; the local Ruflo observer presents reported status separately.
+
 ## Install the skill
 
 From your project directory, run:
@@ -224,7 +240,11 @@ reveal.resume();
 
 ## Record, replay, and create
 
+[![Animated activity recording and replay flow](assets/swarm-record-replay.svg)](docs/activity-and-video.md)
+
 The local Ruflo observer can record observed agent snapshot changes in memory, replay them, and download a minimized JSON timeline. A host supplied MetaHarness adapter can map session envelopes into the same format. Observation times and snapshot changes do not prove execution or actual cursor movement.
+
+[![Animated MetaHarness session integration](assets/swarm-metaharness.svg)](docs/activity-and-video.md#metaharness-adapter)
 
 The [visual studio](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/studio/) previews reveal settings, extracts text from local HTML files, and imports or exports configuration. The optional MP4 exporter creates portrait 9:11, square, and vertical videos from trusted local HTML or a saved observation recording. See the [activity and video guide](docs/activity-and-video.md) for setup, limitations, and MetaHarness examples. A [React example](examples/react/SwarmReveal.jsx) and [Cloudflare deployment guide](docs/cloudflare.md) are also available.
 
