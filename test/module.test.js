@@ -46,3 +46,23 @@ test('element delay is applied once before its show step, not to typed chunks',(
 test('pause and resume retain an initial element delay',()=>{
   const f=fixture();f.items[0].setAttribute('data-swarm-delay','300');const r=createSwarmReveal({root:f.doc,cursors:0,interval:25});r.start();r.pause();f.advance();assert.equal(r.getState().current,0);r.resume();assert.deepEqual(f.delays.slice(0,2),[300,300]);f.advance();assert.equal(r.getState().status,'complete');r.destroy();
 });
+test('adjacent grouped elements reveal in one tick with independent role labels and drag ghosts',()=>{
+  const f=fixture(),seen=[];let activeGhosts=0;
+  for(const [i,el] of f.items.entries()){el.setAttribute('data-swarm-group','hero');el.setAttribute('data-swarm-role',i?'Reviewer':'Designer');el.setAttribute('data-swarm-effect','drag')}
+  f.items[0].setAttribute('data-swarm-delay','70');f.items[1].setAttribute('data-swarm-delay','120');
+  const r=createSwarmReveal({root:f.doc,cursors:4,interval:25,typeText:false,onStep:e=>{seen.push(e);activeGhosts=f.doc.body.children[0].children.filter(x=>x.className==='ms-ghost'&&x.hasAttribute('data-active')).length;assert.equal(f.items.every(x=>!x.hasAttribute('data-ms-hidden')),true)}});
+  r.start();assert.equal(r.getState().current,0);assert.equal(f.delays[0],120);f.advance();
+  assert.deepEqual(seen.map(e=>e.group),['hero','hero']);assert.deepEqual(seen.map(e=>e.effect),['drag','drag']);assert.deepEqual(seen.map(e=>e.current),[1,2]);
+  const overlay=f.doc.body.children[0];const ghosts=overlay.children.filter(x=>x.className==='ms-ghost');const roles=overlay.children.filter(x=>x.className==='ms-role');
+  assert.equal(ghosts.length,2);assert.equal(activeGhosts,2);assert.deepEqual(roles.map(x=>x.textContent),['Designer','Reviewer']);r.destroy();assert.equal(f.items.every(x=>!x.hasAttribute('inert')),true);
+});
+test('group callbacks describe each already-revealed member when paused',()=>{
+  const f=fixture(),events=[];for(const el of f.items){el.setAttribute('data-swarm-group','g');el.setAttribute('data-swarm-delay','50')}
+  let r;r=createSwarmReveal({root:f.doc,cursors:0,interval:25,typeText:false,onStep:e=>{events.push(e.current);if(e.current===1)r.pause()}});
+  r.start();f.advance();assert.deepEqual(events,[1,2]);assert.equal(r.getState().status,'paused');assert.equal(f.items.every(el=>!el.hasAttribute('data-ms-hidden')),true);r.resume();f.advance();assert.equal(r.getState().status,'complete');r.destroy();
+});
+test('invalid group or effect settings fail before DOM mutation',()=>{
+  for(const [name,value] of [['data-swarm-group','spaces not allowed'],['data-swarm-group',''],['data-swarm-group','a'.repeat(33)],['data-swarm-effect','script']]){
+    const f=fixture();f.items[0].setAttribute(name,value);assert.throws(()=>createSwarmReveal({root:f.doc,cursors:0}));assert.equal(f.doc.body.children.length,0);
+  }
+});

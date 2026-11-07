@@ -237,7 +237,7 @@ Pass options to `createSwarmReveal`. Defaults preserve the original reveal behav
 | `typeText` | `true` | Type text on marked leaf elements. |
 | `typeWords` | `3` | Words per typing step, from 1 to 50. |
 | `autoScroll` | `false` | Opt in to scrolling to each target. |
-| `onStep` | None | Receive `{ kind, element, current, total, role? }` after a reveal step. |
+| `onStep` | None | Receive `{ kind, element, current, total, role?, group?, effect? }` after a reveal step. |
 | `onComplete` | None | Receive `{ reason, current, total }` when a run completes or is skipped. |
 | `onError` | None | Receive an animation or callback error after content is restored. |
 
@@ -276,6 +276,15 @@ Set optional attributes on selected elements to control the sequence without rea
 
 `data-swarm-order` is an integer from 0 to 100000. Numbered elements run first in ascending order; ties and unnumbered elements retain document order. `data-swarm-delay` adds 0 to 10000 milliseconds before that element appears. `data-swarm-role` adds a simulated visual label, up to 40 printable characters; it is not agent telemetry. Reduced motion skips the animation and delays.
 
+For simulated parallel work, give adjacent items the same group after sorting by order. Group members reveal in one tick, with separate cursor clusters and optional drag ghosts:
+
+```html
+<h2 data-swarm-item data-swarm-order="1" data-swarm-group="hero" data-swarm-role="Designer" data-swarm-effect="drag">Title</h2>
+<p data-swarm-item data-swarm-order="2" data-swarm-group="hero" data-swarm-role="Writer">Supporting copy</p>
+```
+
+Group names use letters, digits, underscores, or hyphens and are limited to 32 characters; a group can have up to 32 adjacent items. The group waits for the largest member delay. Show callbacks run for each element after the group is visible; typing then proceeds sequentially. Drag ghosts and cursor movement are simulated, not computer input or agent telemetry.
+
 ## Troubleshooting
 
 | Symptom | Check |
@@ -311,6 +320,8 @@ The [portrait MP4](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-p
 The [live landing page](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/) runs on Cloudflare Workers. Its source is in `site/`. The `mouse.ruv.io` hostname is pending access to the Cloudflare account that controls its DNS zone.
 
 ## Development
+
+See the [release guide](docs/release.md) for the automated checks and npm publication steps.
 
 ```bash
 npm test
