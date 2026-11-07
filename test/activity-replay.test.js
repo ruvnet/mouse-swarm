@@ -25,6 +25,16 @@ test('activity video CLI rejects bad records before invoking exporter',async()=>
   }finally{await rm(dir,{recursive:true,force:true})}
 });
 
+test('activity video validates shared capture settings before reading a recording',async()=>{
+  const dir=await mkdtemp(join(tmpdir(),'activity-config-test-'));
+  try{
+    const config=join(dir,'settings.json');await writeFile(config,JSON.stringify({duration:0}));
+    const bin=fileURLToPath(new URL('../bin/activity-video.js',import.meta.url));
+    const result=spawnSync(process.execPath,[bin,'--input',join(dir,'missing.json'),'--output',join(dir,'out.mp4'),'--config',config],{encoding:'utf8'});
+    assert.equal(result.status,1);assert.match(result.stderr,/duration/);
+  }finally{await rm(dir,{recursive:true,force:true})}
+});
+
 test('replay page labels observed provenance and applies state changes in sequence',async()=>{
   const {readFile}=await import('node:fs/promises');const vm=await import('node:vm');
   const script=(await readFile(new URL('../examples/activity-replay.js',import.meta.url),'utf8')).replace('export function','function');
