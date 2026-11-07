@@ -69,4 +69,4 @@ npx mouse-swarm-activity-video --input mouse-swarm-observations.json --output ob
 
 The command validates and minimizes the recording, creates a temporary private replay page, and removes it after capture. It scales the observation intervals to fit the clip, so playback time is not the original elapsed time. Agent IDs, source labels, and observation timestamps appear in the video. The source labels are supplied by the recording and are not cryptographic proof. Review the MP4 before sharing; it may contain sensitive identifiers.
 
-See the [React example](../examples/react/SwarmReveal.jsx), the [Cloudflare deployment guide](cloudflare.md), and the [README](../README.md) for additional integrations.
+See the [Playwright guide](playwright.md) for browser checks and configurable capture settings, the [React example](../examples/react/SwarmReveal.jsx), the [Cloudflare deployment guide](cloudflare.md), and the [README](../README.md) for additional integrations.

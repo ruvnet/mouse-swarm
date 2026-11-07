@@ -1,0 +1,12 @@
+{
+  "preset": "portrait",
+  "browser": "chromium",
+  "duration": 10,
+  "fps": 24,
+  "jpegQuality": 85,
+  "crf": 23,
+  "encoderPreset": "medium",
+  "colorScheme": "dark",
+  "reducedMotion": "no-preference",
+  "waitMs": 0
+}

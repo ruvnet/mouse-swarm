@@ -248,6 +248,10 @@ The local Ruflo observer can record observed agent snapshot changes in memory, r
 
 The [visual studio](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/studio/) previews reveal settings, extracts text from local HTML files, and imports or exports configuration. The optional MP4 exporter creates portrait 9:11, square, and vertical videos from trusted local HTML or a saved observation recording. See the [activity and video guide](docs/activity-and-video.md) for setup, limitations, and MetaHarness examples. A [React example](examples/react/SwarmReveal.jsx) and [Cloudflare deployment guide](docs/cloudflare.md) are also available.
 
+## Playwright verification
+
+Use the optional [Playwright integration](docs/playwright.md) to verify reveal controls, reduced motion, and pointer transparency in a real browser. Configure browser engine, viewport, capture timing, and H.264 output with command flags or a JSON settings file. The guide includes an offline example and explains what each check can prove.
+
 ## Video and deployment
 
 The [portrait MP4](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4) is a pre-rendered example, not a recording of live agents. The browser module does not generate video. The optional local MP4 exporter uses Playwright and FFmpeg; see the [activity and video guide](docs/activity-and-video.md).

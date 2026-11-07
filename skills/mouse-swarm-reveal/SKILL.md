@@ -57,6 +57,10 @@ For a complete authenticated snapshot, validate and map source records to `agent
 
 The local bridge polls only the agent list and excludes task bodies, prompts, and credentials. Custom adapters may accept `task.update` events, but task titles are hidden by default and must not be published without authorization. Do not label illustrative events as native Ruflo wire events.
 
+## Playwright verification
+
+For browser checks, install Playwright and a matching browser in the target project and use `@ruvector/mouse-swarm/playwright` with a host-owned Page. Configure selectors for actual controls and test pause, resume, skip, reduced motion, and pointer transparency. A target with no hidden marker is not proof that text typing or callbacks have completed; check the application completion indicator as well. See the repository `examples/playwright-check.mjs` for a runnable offline example. Choose the browser and video settings according to the request, then validate actual output on the available platform.
+
 ## Validation
 
 - Check the initial sequence, final page, replay, pause, resume, skip, and teardown. Confirm the controls remain usable during the reveal and no target is owned by a second active instance. Validate custom values and progress callbacks. Confirm that links and controls remain usable and the overlay does not intercept clicks.
