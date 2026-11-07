@@ -21,9 +21,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/mouse-swarm-.git"
+    "url": "git+https://github.com/ruvnet/mouse-swarm.git"
   },
-  "homepage": "https://github.com/ruvnet/mouse-swarm-#readme",
+  "homepage": "https://github.com/ruvnet/mouse-swarm#readme",
   "license": "MIT",
   "engines": {
     "node": ">=18"
