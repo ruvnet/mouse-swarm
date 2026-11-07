@@ -1,0 +1,4 @@
+{
+  "description": "Read-only Mouse Swarm status hooks for compatible Claude Code mods",
+  "modules": ["./register.js"]
+}

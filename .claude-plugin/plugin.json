@@ -1,0 +1,12 @@
+{
+  "name": "mouse-swarm",
+  "version": "0.2.0",
+  "description": "Build sequential mouse swarm reveals, observe Ruflo status, and verify playback.",
+  "author": { "name": "ruvnet" },
+  "repository": "https://github.com/ruvnet/mouse-swarm",
+  "homepage": "https://github.com/ruvnet/mouse-swarm#readme",
+  "license": "MIT",
+  "keywords": ["animation", "ruflo", "swarm", "playwright"],
+  "commands": "./plugins/mouse-swarm/commands/",
+  "hooks": "./plugins/mouse-swarm/hooks/hooks.json"
+}

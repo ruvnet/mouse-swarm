@@ -54,11 +54,13 @@
     "assets",
     "docs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    ".claude-plugin",
+    "plugins"
   ],
   "scripts": {
     "test": "node --test",
-    "prepack": "node --check src/index.js && node --check src/ruflo.js && node --check src/ruflo-view.js && node --check src/ruflo-cli.js && node --check src/ruflo-server.js && node --check bin/mouse-swarm.js && node --check src/activity.js && node --check src/metaharness.js && node --check src/video.js && node --check bin/video.js && node --check bin/activity-video.js && node --check examples/activity-replay.js && node --check src/metaharness-file.js && node --check src/playwright.js && node --check examples/playwright-check.mjs"
+    "prepack": "node --check src/index.js && node --check src/ruflo.js && node --check src/ruflo-view.js && node --check src/ruflo-cli.js && node --check src/ruflo-server.js && node --check bin/mouse-swarm.js && node --check src/activity.js && node --check src/metaharness.js && node --check src/video.js && node --check bin/video.js && node --check bin/activity-video.js && node --check examples/activity-replay.js && node --check src/metaharness-file.js && node --check src/playwright.js && node --check examples/playwright-check.mjs && node --check plugins/mouse-swarm/hooks/register.js"
   },
   "repository": {
     "type": "git",

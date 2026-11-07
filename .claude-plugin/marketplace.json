@@ -1,0 +1,12 @@
+{
+  "name": "mouse-swarm",
+  "description": "Mouse Swarm page reveals and local Ruflo observation for Claude Code.",
+  "owner": { "name": "ruvnet" },
+  "plugins": [
+    {
+      "name": "mouse-swarm",
+      "source": "./",
+      "description": "Sequential page reveals, local Ruflo observation, and Playwright validation."
+    }
+  ]
+}

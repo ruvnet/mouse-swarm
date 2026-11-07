@@ -36,6 +36,17 @@ Turn a landing page into a visual build sequence. Elements appear in order while
 
 The screenshots show the public demos. Their cursors are simulated; the local Ruflo observer presents reported status separately.
 
+## Claude Code plugin and Ruflo mod
+
+Install the plugin from the Claude Code prompt:
+
+```text
+/plugin marketplace add ruvnet/mouse-swarm
+/plugin install mouse-swarm@mouse-swarm
+```
+
+The plugin adds reveal, observation, Playwright verification, and video commands. Its optional Claude mod observes successful agent spawn callbacks in process and can contribute a status segment to `ruflo-mods` when that plugin is present. It does not infer cursor positions or task execution. See the [Claude plugin guide](docs/claude-plugin.md) for compatibility, commands, and Ruflo setup.
+
 ## Install the skill
 
 From your project directory, run:
