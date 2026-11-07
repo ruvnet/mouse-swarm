@@ -1,5 +1,7 @@
 # Mouse Swarm Reveal
 
+![Animated mouse swarm building a landing page](assets/mouse-swarm-reveal.svg)
+
 Build a landing page as a sequence of visible elements while simulated cursors and agent markers move around it. This package includes a dependency-free browser module and one portable skill that works with Claude Code and Codex.
 
 [View the Ruflo reveal](https://ruv-built-by-the-swarm.ruv.chatgpt.site/) · [Watch the 9:11 example video](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4)
