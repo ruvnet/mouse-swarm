@@ -58,6 +58,51 @@ reveal.start();
 
 The overlay is pointer transparent and respects reduced motion. Use one instance per root and call `destroy()` when the component unmounts. Avoid marking both a parent and its descendants as reveal targets. Serve `examples/` over HTTP to try the sample without a build tool.
 
+## Configuration
+
+Pass options to `createSwarmReveal`. Defaults preserve the original reveal behavior.
+
+| Option | Default | Purpose |
+| --- | --- | --- |
+| `root` | `document` | Limit the reveal to a document or element. |
+| `selector` | `[data-swarm-item]` | Select targets in document order. |
+| `cursors` | `20` | Number of visual cursors, from 0 to 80. |
+| `interval` | `280` | Milliseconds between reveal steps; minimum 20. |
+| `colors` | Seven preset colors | Array of 1 to 32 cursor color strings. |
+| `cursorSize` | `15` | Cursor width in pixels, from 8 to 48. |
+| `cursorSpeed` | `700` | Cursor movement time in milliseconds, from 0 to 10000. |
+| `botEvery` | `5` | Every fifth marker is a bot; set to 0 for none. |
+| `labels` | `[]` | Optional labels indexed by cursor, up to 80 strings. |
+| `selection` | `true` | Show the selection outline around the current target. |
+| `typeText` | `true` | Type text on marked leaf elements. |
+| `typeWords` | `3` | Words per typing step, from 1 to 50. |
+| `autoScroll` | `false` | Opt in to scrolling to each target. |
+| `onStep` | None | Receive `{ kind, element, current, total }` after a reveal step. |
+| `onComplete` | None | Receive `{ reason, current, total }` when a run completes or is skipped. |
+
+```js
+const reveal = createSwarmReveal({
+  cursors: 32,
+  colors: ['#c8f578', '#70c9f9', '#c9acff'],
+  labels: ['Scout', 'Builder', 'Reviewer'],
+  botEvery: 4,
+  cursorSize: 20,
+  cursorSpeed: 600,
+  interval: 200,
+  typeWords: 2,
+  selection: true,
+  autoScroll: false,
+  onStep: ({ current, total }) => console.log(`${current}/${total}`),
+  onComplete: ({ reason }) => console.log(reason)
+});
+reveal.start();
+reveal.pause();
+reveal.resume();
+// Also available: reveal.replay(), reveal.skip(), reveal.getState(), reveal.destroy().
+```
+
+`getState()` returns `{ status, current, total }`. Completion reasons are `completed`, `skipped`, `reduced-motion`, and `empty`. Reduced motion is always honored. `autoScroll` is optional because automatic scrolling can interrupt readers. Labels and cursor positions are illustrative, not agent telemetry.
+
 ## Video and deployment
 
 The [portrait MP4](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4) is a pre-rendered example, not a recording of live agents. The browser module does not generate video; use a separate recording or rendering workflow when an MP4 is required.
