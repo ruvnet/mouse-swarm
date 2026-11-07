@@ -7,7 +7,8 @@ const routes={
  '/':{url:new URL('../examples/ruflo-live.html',import.meta.url),type:'text/html; charset=utf-8'},
  '/client.js':{url:new URL('../examples/ruflo-live.js',import.meta.url),type:'text/javascript; charset=utf-8'},
  '/ruflo.js':{url:new URL('./ruflo.js',import.meta.url),type:'text/javascript; charset=utf-8'},
- '/ruflo-view.js':{url:new URL('./ruflo-view.js',import.meta.url),type:'text/javascript; charset=utf-8'}
+ '/ruflo-view.js':{url:new URL('./ruflo-view.js',import.meta.url),type:'text/javascript; charset=utf-8'},
+ '/activity.js':{url:new URL('./activity.js',import.meta.url),type:'text/javascript; charset=utf-8'}
 };
 const common={'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer','content-security-policy':"default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'"};
 function send(res,status,text,type='text/plain; charset=utf-8',method='GET'){res.writeHead(status,{...common,'content-type':type});res.end(method==='HEAD'?undefined:text)}

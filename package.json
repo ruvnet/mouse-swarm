@@ -19,10 +19,23 @@
     "./ruflo-cli": {
       "types": "./src/ruflo-cli.d.ts",
       "default": "./src/ruflo-cli.js"
+    },
+    "./activity": {
+      "types": "./src/activity.d.ts",
+      "default": "./src/activity.js"
+    },
+    "./metaharness": {
+      "types": "./src/metaharness.d.ts",
+      "default": "./src/metaharness.js"
+    },
+    "./video": {
+      "types": "./src/video.d.ts",
+      "default": "./src/video.js"
     }
   },
   "bin": {
-    "mouse-swarm": "bin/mouse-swarm.js"
+    "mouse-swarm": "bin/mouse-swarm.js",
+    "mouse-swarm-video": "bin/video.js"
   },
   "files": [
     "src",
@@ -36,7 +49,7 @@
   ],
   "scripts": {
     "test": "node --test",
-    "prepack": "node --check src/index.js && node --check src/ruflo.js && node --check src/ruflo-view.js && node --check src/ruflo-cli.js && node --check src/ruflo-server.js && node --check bin/mouse-swarm.js"
+    "prepack": "node --check src/index.js && node --check src/ruflo.js && node --check src/ruflo-view.js && node --check src/ruflo-cli.js && node --check src/ruflo-server.js && node --check bin/mouse-swarm.js && node --check src/activity.js && node --check src/metaharness.js && node --check src/video.js && node --check bin/video.js"
   },
   "repository": {
     "type": "git",

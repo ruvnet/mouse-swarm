@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {validateStudioConfig} from '../examples/studio.js';
+const example=()=>({version:1,targets:['eyebrow','headline','description','coordinate','compose','replay','action'],options:{cursors:20,interval:220,typeWords:2,cursorSpeed:700,botEvery:5,selection:true,typeText:true,colors:['#c9f578']},content:{headline:'Build together',description:'A page reveal.',action:'Explore'}});
+test('studio config round trips cleanly without sharing mutable state',()=>{const input=example();const result=validateStudioConfig(JSON.parse(JSON.stringify(input)));assert.deepEqual(result,input);input.options.colors[0]='#ffffff';assert.equal(result.options.colors[0],'#c9f578')});
+test('studio rejects malformed, out of range, or executable config fields',()=>{for(const change of [x=>x.targets=[],x=>x.targets=['headline','headline'],x=>x.targets=['fake'],x=>x.options.cursors=81,x=>x.options.interval=0,x=>x.options.colors=['url(https://bad)'],x=>x.options.onStep='alert(1)',x=>x.content.headline='x'.repeat(121),x=>x.content.html='<script>',x=>x.version=2]){const v=example();change(v);assert.throws(()=>validateStudioConfig(v),TypeError)}});
+test('studio treats markup as content and never executes it',()=>{const v=example();v.content.headline='<img src=x onerror=alert(1)>';assert.equal(validateStudioConfig(v).content.headline,v.content.headline)});

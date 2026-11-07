@@ -222,9 +222,15 @@ reveal.resume();
 | Port is in use | Pass a different port, for example `mouse-swarm observe --port 4180`. Open the printed URL on the same machine. |
 | MP4 download is needed | Record or render the animation separately. The browser module does not create MP4 files. |
 
+## Record, replay, and create
+
+The local Ruflo observer can record observed agent snapshot changes in memory, replay them, and download a minimized JSON timeline. A host supplied MetaHarness adapter can map session envelopes into the same format. Observation times and snapshot changes do not prove execution or actual cursor movement.
+
+The sample [visual studio](examples/studio.html) previews reveal settings and imports or exports configuration. The optional MP4 exporter creates portrait 9:11, square, and vertical videos from trusted local HTML. See the [activity and video guide](docs/activity-and-video.md) for setup, limitations, and MetaHarness examples. A [React example](examples/react/SwarmReveal.jsx) and [Cloudflare deployment guide](docs/cloudflare.md) are also available.
+
 ## Video and deployment
 
-The [portrait MP4](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4) is a pre-rendered example, not a recording of live agents. The browser module does not generate video; use a separate recording or rendering workflow when an MP4 is required.
+The [portrait MP4](https://ruv-built-by-the-swarm.ruv.chatgpt.site/ruflo-swarm-portrait.mp4) is a pre-rendered example, not a recording of live agents. The browser module does not generate video. The optional local MP4 exporter uses Playwright and FFmpeg; see the [activity and video guide](docs/activity-and-video.md).
 
 The [live landing page](https://mouse-swarm-reveal.cognitum-consulting-mail.workers.dev/) runs on Cloudflare Workers. Its source is in `site/`. The `mouse.ruv.io` hostname is pending access to the Cloudflare account that controls its DNS zone.
 
